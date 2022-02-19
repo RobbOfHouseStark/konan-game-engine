@@ -22,6 +22,11 @@ namespace konan::core {
     using VertexIndex = std::uint32_t;
 
     struct Tga {
+        bool alpha_channel() const {
+            return bits_per_pixel == 32;
+        }
+
+    public:
         std::vector<std::uint8_t> pixels;
         std::uint32_t width, height, size, bits_per_pixel;
     };

@@ -89,14 +89,13 @@ namespace konan::ecs {
 
     template <typename Injection, typename... Ts>
     std::shared_ptr<Injection> inject(Ts&& ... params) {
-        auto injection { std::make_shared<Injection>(std::forward<Ts>(params)...) };
-        _injections.emplace(typeid(Injection).hash_code(), injection);
-        return injection;
+        return inject(std::make_shared<Injection>(std::forward<Ts>(params)...));
     }
 
     template <typename Injection>
-    void inject(std::shared_ptr<Injection> injection) {
+    std::shared_ptr<Injection> inject(std::shared_ptr<Injection> injection) {
         _injections.emplace(typeid(Injection).hash_code(), injection);
+        return injection;
     }
 
     template <typename Injection>

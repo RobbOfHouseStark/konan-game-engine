@@ -34,16 +34,14 @@ namespace konan::ecs {
                 return _components[entity_id];
             } else {
                 auto component_iterator { _components.find(entity_id) };
-                if (component_iterator == _components.end())
-                    assert(false);
+                assert(component_iterator != _components.end());
                 return component_iterator->second;
             }
         }
 
         const Component& get(EntityId entity_id) const {
             auto component_iterator { _components.find(entity_id) };
-            if (component_iterator == _components.end())
-                assert(false);
+            assert(component_iterator != _components.end());
             return component_iterator->second;
         }
 

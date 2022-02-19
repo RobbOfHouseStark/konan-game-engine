@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <functional>
 
+#include "utility.hpp"
+
 namespace konan::ecs {
     using EntityId = std::uint32_t;
     using ComponentId = std::size_t;
@@ -14,11 +16,8 @@ namespace konan::ecs {
     template <typename Component>
     struct ComponentHandler;
 
-    template <typename T>
-    struct LambdaWrapper { using Type = T; };
-
     template <typename... Components>
-    using FilterLambda = typename LambdaWrapper<std::function<void(EntityId, Components& ...)>>::Type;
+    using FilterLambda = typename core::LambdaWrapper<std::function<void(EntityId, Components& ...)>>::Type;
 }
 
 #endif  // KGE_ECS_TYPES_HPP

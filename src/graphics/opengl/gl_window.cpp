@@ -12,7 +12,7 @@ namespace {
         glfwSetErrorCallback(glfw_error_callback);
     }
 
-    std::shared_ptr<konan::graphics::Window> init_window(std::uint16_t width, std::uint16_t height,
+    std::shared_ptr<konan::graphics::opengl::OpenGlWindow> init_window(std::uint16_t width, std::uint16_t height,
                                                          std::string const& title) {
         // TODO: config.
         std::vector<konan::graphics::opengl::WindowHint> hints {
@@ -20,35 +20,68 @@ namespace {
             std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, 4),
             std::make_pair(GLFW_CONTEXT_VERSION_MINOR, 6),
             std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_API),
-            std::make_pair(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+            std::make_pair(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE)
         };
         konan::core::if_debug([&hints]() { hints.emplace_back(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); });
-
-        auto window {std::make_shared<konan::graphics::opengl::OpenGlWindow>(width, height, title, hints)};
-        window->swap_interval(true);
-        window->depth_test(true);
-        window->cull_face(true);
-        return window;
+        return std::make_shared<konan::graphics::opengl::OpenGlWindow>(width, height, title, hints);
     }
 
     void init_glad() {
-        if (!static_cast<bool>(gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)))
+        if (!static_cast<bool>(gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)))
             throw konan::core::GlfwError("Failed to initialize GLAD.");
+    }
+
+    void input_callback(bool insert, GLFWwindow* window, int id, int scan_code, int action, int mods, int func_id,
+                        konan::graphics::MouseButtonCallback mbc = nullptr,
+                        konan::graphics::KeyCallback kc = nullptr,
+                        bool delete_world = false) {
+        static std::unordered_map<GLFWwindow*,
+            std::pair<konan::graphics::MouseButtonCallback, konan::graphics::KeyCallback>> s_windows_callbacks;
+
+        if (insert) {
+            if (mbc != nullptr) {
+                s_windows_callbacks[window].first = mbc;
+            }
+            if (kc != nullptr) {
+                s_windows_callbacks[window].second = kc;
+            }
+        } else {
+            if (func_id == 0) {
+                s_windows_callbacks[window].first(id, action, id);
+            } else {
+                s_windows_callbacks[window].second(id, scan_code, action, id);
+            }
+        }
+
+        if (delete_world) {
+            s_windows_callbacks.erase(window);
+        }
+    }
+
+    void button_callback(GLFWwindow* window, int id, int action, int mods) {
+        input_callback(false, window, id, 0, action, mods, 0);
+    }
+
+    void key_callback(GLFWwindow* window, int id, int scan_code, int action, int mods) {
+        input_callback(false, window, id, scan_code, action, mods, 1);
     }
 }
 
 namespace konan::graphics::opengl {
     std::shared_ptr<Window> make_window(std::uint16_t width, std::uint16_t height, std::string const& title) {
         init_glfw();
-        std::shared_ptr<Window> window { init_window(width, height, title) };
+        auto window { init_window(width, height, title) };
         init_glad();
+        window->swap_interval(true);
+        window->depth_test(true);
+        window->cull_face(true);
         return window;
     }
 
     OpenGlWindow::OpenGlWindow(std::uint16_t width, std::uint16_t height,
                                std::string title, std::vector<WindowHint> const& hints)
         : Window(width, height, std::move(title)), _window {} {
-        for (auto [name, value]: hints)
+        for (auto[name, value]: hints)
             glfwWindowHint(name, value);
 
         _window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
@@ -56,6 +89,10 @@ namespace konan::graphics::opengl {
             throw core::GlfwError("Failed to open GLFW window.");
 
         glfwMakeContextCurrent(_window);
+    }
+
+    OpenGlWindow::~OpenGlWindow() {
+
     }
 
     bool OpenGlWindow::should_close() const {
@@ -79,17 +116,17 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlWindow::depth_test(bool on) {
-        /*if (on)
+        if (on)
             glEnable(GL_DEPTH_TEST);
         else
             glDisable(GL_DEPTH_TEST);
 
-        glDepthFunc(GL_LESS);*/
+        glDepthFunc(GL_LESS);
     }
 
     void OpenGlWindow::cull_face(bool on) {
-        /*auto func {on ? glEnable : glDisable};
-        func(GL_CULL_FACE);*/
+        auto func {on ? glEnable : glDisable};
+        func(GL_CULL_FACE);
     }
 
     void OpenGlWindow::title(std::string title) {
@@ -97,19 +134,29 @@ namespace konan::graphics::opengl {
         glfwSetWindowTitle(_window, _title.c_str());
     }
 
-    void OpenGlWindow::button_callback(GLFWmousebuttonfun callback) {
-        glfwSetMouseButtonCallback(_window, callback);
+    void OpenGlWindow::mouse_button_callback(MouseButtonCallback mbc) {
+        input_callback(true, _window, 0, 0, 0, 0, 0, mbc);
+        glfwSetMouseButtonCallback(_window,
+            [](GLFWwindow* window, int id, int action, int mods) {
+                input_callback(false, window, id, 0, action, mods, 0);
+            });
     }
 
-    void OpenGlWindow::key_callback(GLFWkeyfun callback) {
-        glfwSetKeyCallback(_window, callback);
+    void OpenGlWindow::key_callback(KeyCallback kc) {
+        input_callback(true, _window, 0, 0, 0, 0, 1, nullptr, kc);
+        glfwSetKeyCallback(_window,
+                                   [](GLFWwindow* window, int id, int scan_code, int action, int mods) {
+                                       input_callback(false, window, id, scan_code, action, mods, 1);
+                                   });
     }
 
-    void OpenGlWindow::mouse_position_callback(GLFWcursorposfun callback) {
-        glfwSetCursorPosCallback(_window, callback);
+    void OpenGlWindow::mouse_position(double x, double y) {
+        glfwSetCursorPos(_window, x, y);
     }
 
-    void OpenGlWindow::mouse_enter_callback(GLFWcursorenterfun callback) {
-        glfwSetCursorEnterCallback(_window, callback);
+    std::pair<double, double> OpenGlWindow::mouse_position() const {
+        double x, y;
+        glfwGetCursorPos(_window, &x, &y);
+        return { x, y };
     }
 }

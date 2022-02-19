@@ -8,7 +8,7 @@ namespace konan::core {
     struct KonanError : public std::runtime_error {
         template <typename... Ts>
         explicit KonanError(std::string error_message = "", Ts&& ... error_messages)
-            : runtime_error((error_message + ... + error_messages)) {
+            : runtime_error((std::string(error_message) + ... + error_messages)) {
         }
     };
 
