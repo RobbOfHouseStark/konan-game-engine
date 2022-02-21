@@ -17,10 +17,7 @@ namespace konan::graphics {
         float height { static_cast<float>(_height) },
             width { static_cast<float>(_width) };
 
-        if (height > width)
-            return height / width;
-
-        return width / height;
+        return height / width;
     }
 
     std::string const& Window::title() const {

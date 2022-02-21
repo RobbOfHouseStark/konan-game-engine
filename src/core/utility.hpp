@@ -1,23 +1,27 @@
-#ifndef KGE_CORE_UTILITY_HPP
-#define KGE_CORE_UTILITY_HPP
+#ifndef KGE_CORE_ASSERTION_HPP
+#define KGE_CORE_ASSERTION_HPP
 
-#include <tuple>
-#include <vector>
+#include <numeric>
+#include <string>
 
 namespace konan::core {
-    template <typename T>
-    struct LambdaWrapper { using Type = T; };
+    template <typename Func>
+    void if_debug(Func func) {
+#ifndef NDEBUG
+        func();
+#endif
+    }
 
-    template <typename FrwrdIt, typename... FrwrdIts>
-    auto zip(FrwrdIt begin, FrwrdIt end, FrwrdIts ... params) {
-        std::vector<std::tuple<typename FrwrdIt::value_type, typename FrwrdIts::value_type...>> zipped;
-        while (begin != end) {
-            zipped.emplace_back(*begin, *params...);
-            ++begin;
-            (..., ++params);
-        }
-        return zipped;
+    template <typename It, typename T>
+    auto join(It const& iterable, T const& separator) {
+        auto begin { std::begin(iterable) };
+        auto end { std::end(iterable) };
+        auto start { *begin };
+        return std::accumulate(++begin, end, start,
+                    [&separator](auto a, typename It::value_type b) {
+                        return std::move(a) + separator + b;
+                    });
     }
 }
 
-#endif  // KGE_CORE_UTILITY_HPP
+#endif  // KGE_CORE_ASSERTION_HPP

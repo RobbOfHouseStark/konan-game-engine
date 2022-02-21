@@ -13,12 +13,13 @@ namespace {
     }
 
     std::shared_ptr<konan::graphics::opengl::OpenGlWindow> init_window(std::uint16_t width, std::uint16_t height,
-                                                         std::string const& title) {
+                                                         std::string const& title, std::uint8_t msaa,
+                                                         std::uint8_t major_version, std::uint8_t minor_version) {
         // TODO: config.
         std::vector<konan::graphics::opengl::WindowHint> hints {
-            std::make_pair(GLFW_SAMPLES, 8),
-            std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, 4),
-            std::make_pair(GLFW_CONTEXT_VERSION_MINOR, 6),
+            std::make_pair(GLFW_SAMPLES, msaa),
+            std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, major_version),
+            std::make_pair(GLFW_CONTEXT_VERSION_MINOR, minor_version),
             std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_API),
             std::make_pair(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE)
         };
@@ -38,6 +39,11 @@ namespace {
         static std::unordered_map<GLFWwindow*,
             std::pair<konan::graphics::MouseButtonCallback, konan::graphics::KeyCallback>> s_windows_callbacks;
 
+        if (delete_world) {
+            s_windows_callbacks.erase(window);
+            return;
+        }
+
         if (insert) {
             if (mbc != nullptr) {
                 s_windows_callbacks[window].first = mbc;
@@ -52,10 +58,6 @@ namespace {
                 s_windows_callbacks[window].second(id, scan_code, action, id);
             }
         }
-
-        if (delete_world) {
-            s_windows_callbacks.erase(window);
-        }
     }
 
     void button_callback(GLFWwindow* window, int id, int action, int mods) {
@@ -68,9 +70,10 @@ namespace {
 }
 
 namespace konan::graphics::opengl {
-    std::shared_ptr<Window> make_window(std::uint16_t width, std::uint16_t height, std::string const& title) {
+    std::shared_ptr<Window> make_window(std::uint16_t width, std::uint16_t height, std::string const& title,
+                                        std::uint8_t msaa, std::uint8_t major_version, std::uint8_t minor_version) {
         init_glfw();
-        auto window { init_window(width, height, title) };
+        auto window { init_window(width, height, title, msaa, major_version, minor_version) };
         init_glad();
         window->swap_interval(true);
         window->depth_test(true);
@@ -92,7 +95,20 @@ namespace konan::graphics::opengl {
     }
 
     OpenGlWindow::~OpenGlWindow() {
+        input_callback(false, _window, 0, 0, 0, 0, 0, nullptr, nullptr, true);
+        glfwDestroyWindow(_window);
+    }
 
+    void OpenGlWindow::init_imgui() {
+        ImGui::CreateContext();
+        ImGui::StyleColorsDark();
+
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+        ImGui_ImplGlfw_InitForOpenGL(_window, true);
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     bool OpenGlWindow::should_close() const {

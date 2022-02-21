@@ -3,14 +3,11 @@
 
 #include <cstdint>
 
+#include "bindable.hpp"
 #include "files.hpp"
 
 namespace konan::graphics {
-    struct Texture {
-        virtual ~Texture() = default;
-
-        virtual void bind(std::uint8_t slot) = 0;
-        virtual void unbind() = 0;
+    struct Texture : public Bindable {
     };
 }
 

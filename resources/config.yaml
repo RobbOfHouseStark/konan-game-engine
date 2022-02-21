@@ -1,0 +1,16 @@
+window:
+  size:
+    x: 1600
+    y: 900
+  title: Konan Game Engine Editor.
+  msaa: 8
+opengl:
+  version:
+    major: 4
+    minor: 6
+  vertex-layout: [3, 2, 3]
+  shader-types:
+    - name: vertex
+      glad-id: 0x8B31
+    - name: fragment
+      glad-id: 0x8B30

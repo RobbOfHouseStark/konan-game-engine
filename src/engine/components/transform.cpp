@@ -1,6 +1,12 @@
 #include "transform.hpp"
 
 namespace konan::engine {
+    Transform::Transform(float x, float y, float z)
+        : Transform({ x, y, z }, {}, { 1.f, 1.f, 1.f }) {}
+
+    Transform::Transform(glm::vec3 const& position, glm::vec3 const& rotation, glm::vec3 const& scale)
+        : position { position }, rotation { rotation }, scale { scale } {}
+
     glm::vec3 Transform::forward() const {
         return { glm::cos(rotation.x) * glm::sin(rotation.y),
                  glm::sin(rotation.x),

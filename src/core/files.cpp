@@ -47,35 +47,8 @@ namespace {
 }
 
 namespace konan::core {
-    std::vector<std::string> load_glsl(std::string_view file_path) {
-        enum class ReadMode {
-            none = -1, vertex = 0, fragment = 1
-        } mode { ReadMode::none };
-
-        std::ifstream file { file_path.data() };
-        if (!file.is_open())
-            throw FileError("Couldn't open shader: ", file_path.data());
-
-        std::stringstream ss[2];
-        std::string line;
-        while (getline(file, line)) {
-            if (line.find("#shader") != std::string::npos) {
-                if (line.find("vertex") != std::string::npos)
-                    mode = ReadMode::vertex;
-                else if (line.find("fragment") != std::string::npos)
-                    mode = ReadMode::fragment;
-                else
-                    throw core::FileError("Got unknown shader type in ", file_path.data());
-
-                continue;
-            }
-            ss[static_cast<std::uint8_t>(mode)] << line << '\n';
-        }
-        return { ss[0].str(), ss[1].str() };
-    }
-
     auto load_obj(std::string_view file_path)
-                    -> std::pair<std::vector<Vertex>, std::vector<VertexIndex>> {
+                    -> std::pair<std::vector<std::array<float, 8>>, std::vector<std::uint32_t>> {
         std::ifstream file { file_path.data() };
         if (!file.is_open())
             throw FileError("Couldn't open shader: ", file_path.data());
@@ -92,7 +65,6 @@ namespace konan::core {
 
             std::string header { line.substr(0, 2) };
             std::string content { line.substr(2) };
-
             if (header == "v ")
                 positions.push_back(parse_vec<glm::vec3>(content, ' '));
             else if (header == "vt")
@@ -203,5 +175,46 @@ namespace konan::core {
 
         tga.pixels = image_data;
         return tga;
+    }
+
+    GlslData load_glsl(std::string_view file_path, std::vector<std::string> const& shader_types) {
+        std::ifstream file { file_path.data() };
+        if (!file.is_open())
+            throw FileError("Couldn't open shader: ", file_path.data());
+
+        int mode { -1 };
+        std::stringstream ss[2];
+        std::unordered_map<std::string, std::string> uniforms;
+
+        std::regex shader_type { "(#shader[ ]+)" };
+        std::regex shader_name { '(' + core::join(shader_types, '|') + ')' };
+        std::regex uniform { "(uniform[ ]+)" };
+        std::regex uniform_type { "(\\ [A-Za-z0-9]+\\ )" };
+        std::regex uniform_name { "(\\ [A-Za-z0-9_]+\\;)" };
+
+        std::string line;
+        while (getline(file, line)) {
+            std::smatch matches;
+            if (std::regex_search(line, shader_type)) {
+                std::regex_search(line, matches, shader_name);
+                mode = -1;
+                for (int i {}; i < shader_types.size(); ++i) {
+                    if (shader_types[i] == matches.str(1)) {
+                        mode = i;
+                        break;
+                    }
+                }
+                continue;
+            } else if (std::regex_search(line, uniform)) {
+                std::regex_search(line, matches, uniform_type);
+                auto type { matches.str(1).substr(1, matches.str(1).size() - 2) };
+                std::regex_search(line, matches, uniform_name);
+                uniforms.emplace(matches.str(1).substr(1, matches.str(1).size() - 2), type);
+            }
+
+            ss[mode] << line << '\n';
+        }
+
+        return { { ss[0].str(), ss[1].str() }, uniforms };
     }
 }

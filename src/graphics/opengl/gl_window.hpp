@@ -9,10 +9,12 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
-#include "assersion.hpp"
-#include "exceptions.hpp"
 #include "utility.hpp"
+#include "exceptions.hpp"
 #include "window.hpp"
 
 namespace konan::graphics::opengl {
@@ -20,7 +22,9 @@ namespace konan::graphics::opengl {
 
     struct OpenGlWindow final : public Window {
         OpenGlWindow(std::uint16_t width, std::uint16_t height, std::string title, std::vector<WindowHint> const& hints);
-        ~OpenGlWindow();
+        ~OpenGlWindow() final;
+
+        void init_imgui() override;
 
         bool should_close() const override;
         void clear() override;
@@ -42,7 +46,8 @@ namespace konan::graphics::opengl {
         GLFWwindow* _window;
     };
 
-    std::shared_ptr<Window> make_window(std::uint16_t width, std::uint16_t height, std::string const& title);
+    std::shared_ptr<Window> make_window(std::uint16_t width, std::uint16_t height, std::string const& title,
+                                        std::uint8_t msaa, std::uint8_t major_version, std::uint8_t minor_version);
 }
 
 #endif  // KGE_GRAPHICS_GL_WINDOW_HPP

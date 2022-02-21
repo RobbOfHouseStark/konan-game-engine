@@ -2,13 +2,18 @@ add_library(
         engine
         systems/render_system.cpp systems/render_system.hpp
         systems/event_system.cpp systems/event_system.hpp
-        components/gl_model.cpp components/gl_model.hpp
         components/camera.cpp components/camera.hpp
-        components/transform.cpp components/transform.hpp systems/input_system.cpp systems/input_system.hpp events/key.cpp events/key.hpp events/button.cpp events/button.hpp events/mouse_move.cpp events/mouse_move.hpp)
+        components/transform.cpp components/transform.hpp
+        systems/input_system.cpp systems/input_system.hpp
+        events/key.cpp events/key.hpp
+        events/button.cpp events/button.hpp
+        events/mouse_move.cpp events/mouse_move.hpp
+        components/model.hpp components/model.cpp interpreters/imgui_interpreter.hpp components/id.cpp components/id.hpp)
 
 target_include_directories(
         engine INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/components
+        engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/components/opengl
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/systems
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/events
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/interpreters

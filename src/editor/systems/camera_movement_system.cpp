@@ -19,7 +19,7 @@ namespace konan::editor {
 
                     // TODO: chg float to double everywhere.
                     transform.rotation.y -= static_cast<float>(movement.dx) * _rotation_speed;
-                    transform.rotation.x -= static_cast<float>(movement.dy) * _rotation_speed;
+                    transform.rotation.x += static_cast<float>(movement.dy) * _rotation_speed;
                 });
 
                 _world->filter<engine::Key>(

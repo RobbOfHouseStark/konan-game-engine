@@ -1,13 +1,12 @@
 #ifndef KGE_CORE_FILES_HPP
 #define KGE_CORE_FILES_HPP
 
-#include <array>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <regex>
 #include <sstream>
 #include <string>
-#include <tuple>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -16,13 +15,16 @@
 #include <glm/gtx/hash.hpp>
 
 #include "exceptions.hpp"
+#include "utility.hpp"
 
 namespace konan::core {
-    using Vertex = std::array<float, 8>;
-    using VertexIndex = std::uint32_t;
+    struct GlslData {
+        std::vector<std::string> data;
+        std::unordered_map<std::string, std::string> uniforms;
+    };
 
     struct Tga {
-        bool alpha_channel() const {
+        inline bool alpha_channel() const {
             return bits_per_pixel == 32;
         }
 
@@ -31,11 +33,11 @@ namespace konan::core {
         std::uint32_t width, height, size, bits_per_pixel;
     };
 
-    std::vector<std::string> load_glsl(std::string_view file_path);
+    // TODO: rewrite with config and regexs.
     auto load_obj(std::string_view file_path)
-                    -> std::pair<std::vector<Vertex>, std::vector<VertexIndex>>;
-
+                    -> std::pair<std::vector<std::array<float, 8>>, std::vector<std::uint32_t>>;
     Tga load_tga(std::string_view file_path);
+    GlslData load_glsl(std::string_view file_path, std::vector<std::string> const& shader_types);
 }
 
 #endif  // KGE_CORE_FILES_HPP

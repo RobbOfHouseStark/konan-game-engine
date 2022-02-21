@@ -1,6 +1,9 @@
 add_library(editor editor.cpp editor.hpp systems/camera_movement_system.cpp systems/camera_movement_system.hpp)
-target_include_directories(editor INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(editor PRIVATE core ecs engine graphics)
+target_include_directories(
+        editor INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+        editor PUBLIC ../../deps/yaml-cpp/include
+)
+target_link_libraries(editor PRIVATE yaml-cpp core ecs engine graphics)
 
 add_custom_command(
         TARGET editor POST_BUILD
@@ -21,4 +24,11 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/../../resources/textures/bricks.tga
         ${CMAKE_CURRENT_BINARY_DIR}/../resources/textures/bricks.tga
+)
+
+add_custom_command(
+        TARGET editor POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../resources/config.yaml
+        ${CMAKE_CURRENT_BINARY_DIR}/../config.yaml
 )

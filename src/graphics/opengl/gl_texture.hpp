@@ -8,14 +8,10 @@
 
 namespace konan::graphics::opengl {
     struct OpenGlTexture : public Texture {
-        OpenGlTexture(core::Tga const& tga, std::uint8_t slot);
+        explicit OpenGlTexture(core::Tga const& tga);
 
-        void bind(std::uint8_t slot) override;
+        void bind() override;
         void unbind() override;
-
-    private:
-        std::uint32_t _id;
-        std::uint8_t _current_slot;
     };
 }
 

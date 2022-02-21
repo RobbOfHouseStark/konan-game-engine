@@ -6,6 +6,8 @@
 
 namespace konan::engine {
     struct Camera {
+        Camera(float fov, float ratio, float near_clipping_plane, float far_clipping_plane);
+
         glm::mat4 projection_matrix() const;
 
     public:

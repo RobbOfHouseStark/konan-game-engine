@@ -2,7 +2,9 @@
 #define KGE_GRAPHICS_GL_VERTEX_ARRAY_HPP
 
 #include <array>
+#include <execution>
 #include <cstdint>
+#include <numeric>
 #include <vector>
 
 #include <glad/glad.h>
@@ -14,19 +16,28 @@
 
 namespace konan::graphics::opengl {
     struct OpenGlVertexLayout {
-        explicit OpenGlVertexLayout(std::uint16_t stride);
+        explicit OpenGlVertexLayout(std::vector<std::uint8_t> layout);
 
-        void add(std::uint8_t count);
         void apply() const;
 
     private:
-        std::uint16_t _stride;
-        std::vector<std::uint8_t> _layers;
+        std::vector<std::uint8_t> _layout;
     };
 
     struct OpenGlVertexArray : public VertexArray {
-        OpenGlVertexArray(std::pair<std::vector<core::Vertex>, std::vector<core::VertexIndex>> const& data,
-                          OpenGlVertexLayout const& vertex_layout);
+        template <typename Vertex>
+        OpenGlVertexArray(std::vector<Vertex> const& vbo_data, std::vector<std::uint32_t> const& ibo_data,
+                          OpenGlVertexLayout const& vertex_layout)
+            : _vbo { vbo_data, GL_ARRAY_BUFFER }, _ibo { ibo_data, GL_ELEMENT_ARRAY_BUFFER } {
+            glGenVertexArrays(1, &_id);
+            _release = [](std::uint32_t id) { glDeleteVertexArrays(1, &id); };
+
+            glBindVertexArray(_id);
+            _vbo.bind();
+            _ibo.bind();
+
+            vertex_layout.apply();
+        }
 
         void bind() override;
         void unbind() override;
@@ -35,8 +46,6 @@ namespace konan::graphics::opengl {
         std::size_t indices_size() const override;
 
     private:
-        std::uint32_t _id;
-
         OpenGlBuffer _vbo;
         OpenGlBuffer _ibo;
     };
