@@ -5,13 +5,15 @@
 #include "window.hpp"
 
 namespace konan::engine {
-    struct EventSystem : public ecs::IRunSystem {
-        explicit EventSystem(bool* running);
+struct EventSystem : public ecs::IInitSystem, public ecs::IRunSystem {
+        explicit EventSystem(bool& running);
+
+        void init() override;
         void run() override;
 
     private:
-        bool* _running;
-        std::shared_ptr<graphics::Window> _window;
+        bool& _running;
+        std::shared_ptr<graphics::Window> window_;
     };
 }
 

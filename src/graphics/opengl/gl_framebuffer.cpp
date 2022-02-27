@@ -3,7 +3,7 @@
 namespace konan::graphics::opengl {
     OpenGlFramebuffer::OpenGlFramebuffer(std::uint32_t width, std::uint32_t height)
         : _width { width }, _height { height } {
-        _release = [](std::uint32_t id) {
+        release = [](std::uint32_t id) {
             glDeleteFramebuffers(1, &id);
         };
 
@@ -11,14 +11,14 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlFramebuffer::resize() {
-        if (_id != 0) {
-            glDeleteFramebuffers(1, &_id);
+        if (id != 0) {
+            glDeleteFramebuffers(1, &id);
             glDeleteTextures(1, &_color_attachment);
             glDeleteTextures(1, &_depth_attachment);
         }
 
-        glCreateFramebuffers(1, &_id);
-        glBindFramebuffer(GL_FRAMEBUFFER, _id);
+        glCreateFramebuffers(1, &id);
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
         glViewport(0, 0, _width, _height);;
 
         glGenTextures(1, &_color_attachment);
@@ -56,7 +56,7 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlFramebuffer::bind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, _id);
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
         glViewport(0, 0, _width, _height);
     }
 

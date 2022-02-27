@@ -1,14 +1,17 @@
 #include "event_system.hpp"
 
 namespace konan::engine {
-    EventSystem::EventSystem(bool* running)
+    EventSystem::EventSystem(bool& running)
         : _running { running } {}
 
+    void EventSystem::init() {
+        window_ = _world->injection<graphics::Window>();
+    }
+
     void EventSystem::run() {
-        auto window { _world->injection<graphics::Window>() };
-        window->poll_events();
-        if (window->should_close()) {
-            *_running = false;
+        window_->poll_events();
+        if (window_->should_close()) {
+            _running = false;
         }
     }
 }

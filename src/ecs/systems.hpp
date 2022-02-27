@@ -12,6 +12,7 @@
 namespace konan::ecs {
     struct ISystem {
         void world(std::shared_ptr<World> world);
+        virtual ~ISystem() = default;
 
     protected:
         std::shared_ptr<World> _world;

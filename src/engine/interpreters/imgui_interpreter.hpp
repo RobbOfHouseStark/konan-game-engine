@@ -11,26 +11,26 @@
 
 namespace konan::engine {
     struct ImGuiInterpreter {
-        static void interpret(ecs::EntityId entity, std::shared_ptr<ecs::World> world) {
-            if (world->has<Id>(entity)) {
+        static void interpret(ecs::Entity entity, std::shared_ptr<ecs::World> world) {
+            if (entity.has<Id>()) {
                 if (ImGui::TreeNode("Id.")) {
-                    auto& component { world->get<Id>(entity) };
+                    auto& component { entity.get<Id>() };
                     ImGui::InputText("Tag.", (char*)component.tag.c_str(), 50);
                     ImGui::InputText("Name.", (char*)component.name.c_str(), 50);
                     ImGui::TreePop();
                 }
             }
-            if (world->has<Transform>(entity)) {
+            if (entity.has<Transform>()) {
                 if (ImGui::TreeNode("Transform.")) {
-                    auto& component { world->get<Transform>(entity) };
+                    auto& component { entity.get<Transform>() };
                     ImGui::DragFloat3("Position.", &(component.position[0]));
                     ImGui::DragFloat3("Rotation.", &(component.rotation[0]), 2.f);
                     ImGui::DragFloat3("Scale.", &(component.scale[0]), .1f, 100.f, .001f, "%.3f", 0);
                     ImGui::TreePop();
                 }
             }
-            if (world->has<Camera>(entity)) {
-                auto& component { world->get<Camera>(entity) };
+            if (entity.has<Camera>()) {
+                auto& component { entity.get<Camera>() };
                 if (ImGui::TreeNode("Camera.")) {
                     ImGui::DragFloat("Fov.", &(component.fov));
                     ImGui::DragFloat("Ratio.", &(component.ratio), 0.01f, 0.f, 3.f);

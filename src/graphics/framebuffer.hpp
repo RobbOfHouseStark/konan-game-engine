@@ -4,7 +4,7 @@
 #include "bindable.hpp"
 
 namespace konan::graphics {
-    struct Framebuffer : public Bindable {
+    struct Framebuffer : public IBindable {
         virtual void resize() = 0;
         virtual void resize(std::uint32_t width, std::uint32_t height) = 0;
 

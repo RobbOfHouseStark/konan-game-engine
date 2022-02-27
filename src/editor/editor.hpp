@@ -14,15 +14,21 @@
 #include "id.hpp"
 #include "logging.hpp"
 #include "scene.hpp"
+#include "script.hpp"
+#include "scripts/editor_cube.hpp"
 #include "systems/camera_movement_system.hpp"
 #include "systems/event_system.hpp"
 #include "systems/input_system.hpp"
 #include "systems/render_system.hpp"
+#include "systems/script_system.hpp"
 #include "window.hpp"
 
 namespace konan::editor {
     struct Editor : public ecs::Scene {
         Editor();
+
+    private:
+        bool started_ { true };
     };
 }
 

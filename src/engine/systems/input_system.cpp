@@ -23,26 +23,26 @@ namespace konan::engine {
         _window = _world->injection<graphics::Window>();
         _window->mouse_button_callback(mouse_button_callback);
         _window->key_callback(key_callback);
-
-        _input = _world->new_entity();
     }
 
     void InputSystem::run() {
+        static ecs::Entity input { _world->new_entity() };
+
         auto [x, y] = _window->mouse_position();
-        auto dx = x - _previous_x, dy = y - _previous_y;
+        auto dx { x - _previous_x }, dy { y - _previous_y };
         if (dx != 0 || dy != 0) {
-            _world->replace<MouseMove>(_input, dx, dy);
+            input.replace<MouseMove>(dx, dy);
             _previous_x = x;
             _previous_y = y;
         }
 
         if (s_button.has_value()) {
-            _world->replace<Button>(_input, s_button.value());
+            input.replace<Button>(s_button.value());
             s_button.reset();
         }
 
         if (s_key.has_value()) {
-            _world->replace<Key>(_input, s_key.value());
+            input.replace<Key>(s_key.value());
             s_key.reset();
         }
     }

@@ -16,4 +16,4 @@ namespace konan::ecs {
     };
 }
 
-#endif  //K GE_ECS_SCENE_HPP
+#endif  // KGE_ECS_SCENE_HPP

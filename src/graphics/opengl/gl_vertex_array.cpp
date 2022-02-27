@@ -17,7 +17,7 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlVertexArray::bind() {
-        glBindVertexArray(_id);
+        glBindVertexArray(id);
         _vbo.bind();
         _ibo.bind();
     }

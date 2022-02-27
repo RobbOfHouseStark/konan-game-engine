@@ -29,10 +29,10 @@ namespace konan::graphics::opengl {
         OpenGlVertexArray(std::vector<Vertex> const& vbo_data, std::vector<std::uint32_t> const& ibo_data,
                           OpenGlVertexLayout const& vertex_layout)
             : _vbo { vbo_data, GL_ARRAY_BUFFER }, _ibo { ibo_data, GL_ELEMENT_ARRAY_BUFFER } {
-            glGenVertexArrays(1, &_id);
-            _release = [](std::uint32_t id) { glDeleteVertexArrays(1, &id); };
+            glGenVertexArrays(1, &id);
+            release = [](std::uint32_t id) { glDeleteVertexArrays(1, &id); };
 
-            glBindVertexArray(_id);
+            glBindVertexArray(id);
             _vbo.bind();
             _ibo.bind();
 

@@ -5,9 +5,8 @@
 #include "camera.hpp"
 #include "key.hpp"
 #include "mouse_move.hpp"
-#include "systems.hpp"
 #include "transform.hpp"
-#include "world.hpp"
+#include "ecs.hpp"
 
 namespace konan::editor {
     struct CameraMovementSystem : public ecs::IRunSystem {

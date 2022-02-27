@@ -1,136 +1,165 @@
 #ifndef KGE_ECS_WORLD_HPP
 #define KGE_ECS_WORLD_HPP
 
-#include <memory>
-#include <typeindex>
 #include <typeinfo>
-#include <unordered_map>
+#include <typeindex>
+#include <tuple>
+#include <unordered_set>
 
 #include "component_handler.hpp"
+#include "component_iterable.hpp"
 #include "types.hpp"
 
 namespace konan::ecs {
     struct World : public std::enable_shared_from_this<World> {
-        EntityId new_entity() const;
+        ~World();
+
+        Entity new_entity();
 
         template <typename Component>
         Component& get(EntityId entity_id) {
-            auto& component { component_handler<Component>() };
-            return component.get(entity_id);
+            return ComponentHolder<Component>::impl.get(id_, entity_id);
         }
 
         template <typename Component>
-        const Component& get(EntityId entity_id) const {
-            auto const& component { component_handler<Component>() };
-            return component.get(entity_id);
-        }
-
-        template <typename Component>
-        Component& replace(EntityId entity_id, Component&& new_component) {
-            auto& component { component_handler<Component>() };
-            return component.replace(entity_id, std::forward<Component>(new_component));
+        Component const& get(EntityId entity_id) const {
+            return ComponentHolder<Component>::impl.get(id_, entity_id);
         }
 
         template <typename Component, typename... Ts>
         Component& replace(EntityId entity_id, Ts&& ... params) {
-            auto& component { component_handler<Component>() };
-            return component.replace(entity_id, std::forward<Ts>(params)...);
+            return ComponentHolder<Component>::impl.replace(id_, entity_id, std::forward<Ts>(params)...);
+        }
+
+        template <typename Component>
+        Component& replace(EntityId entity_id, Component&& component) {
+            return ComponentHolder<Component>::impl.replace(id_, entity_id, std::forward<Component>(component));
         }
 
         template <typename Component>
         bool has(EntityId entity_id) const {
-            auto const& component { component_handler<Component>() };
-            return component.has(entity_id);
+            return ComponentHolder<Component>::impl.has(id_, entity_id);
+        }
+
+        template <typename Component>
+        void del(EntityId entity_id) {
+            ComponentHolder<Component>::impl.del(id_, entity_id);
         }
 
         void del(EntityId entity_id);
 
-        template <typename Component>
-        void del(EntityId entity_id) {
-            auto& component { component_handler<Component>() };
-            component.del(entity_id);
+        template <typename Component, typename... Components>
+        decltype(auto) filter() {
+            if constexpr (sizeof...(Components) == 0) {
+                return ComponentIterable<std::pair<Entity, Component&>>(iter<Component>());
+            } else {
+                return ComponentIterable<std::tuple<Entity, Component&, Components&...>>(
+                    each<Component, Components...>()
+                );
+            }
         }
 
         template <typename Component, typename... Components>
-        void filter(FilterLambda<Component, Components...> const& lambda) {
-            auto& component { component_handler<Component>() };
-
+        decltype(auto) filter() const {
             if constexpr (sizeof...(Components) == 0) {
-                component.filter(lambda);
+                return ComponentIterable<std::pair<Entity, Component&>>(iter<Component>());
             } else {
-                component.filter(
-                    [this, &component, &lambda](EntityId entity_id, Component& iter_component) {
-                        if (!(... && component_handler_lazy<Components>().has(entity_id)))
-                            return;
-
-                        lambda(entity_id, iter_component,
-                               component_handler_lazy<Components>().get_strict(entity_id)...);
-                    });
+                return ComponentIterable<std::tuple<Entity, Component&, Components&...>>(
+                    each<Component, Components...>()
+                );
             }
+        }
+
+        template <typename Injection, typename... Ts>
+        void inject(Ts&& ... params) {
+            _injections.emplace(typeid(Injection).hash_code(), std::make_shared<Injection>(std::forward<Ts>(params)...));
+        }
+
+        template <typename Injection>
+        std::shared_ptr<Injection> inject(std::shared_ptr<Injection> injection) {
+            _injections.emplace(typeid(Injection).hash_code(), injection);
+            return injection;
+        }
+
+        template <typename Injection>
+        std::shared_ptr<Injection> injection() {
+            auto injection_iterator { _injections.find(typeid(Injection).hash_code()) };
+            assert(injection_iterator != _injections.end());
+            return std::static_pointer_cast<Injection>(injection_iterator->second);
         }
 
         template <typename Component>
         void one_frame() {
-            auto& component { component_handler<Component>() };
-            component.set_one_frame();
+            ComponentHolder<Component>::impl.set_one_frame(id_);
         }
 
-        void update() {
-            for (auto& [_, component]: _components)
-                if (component->one_frame())
-                    component->clear();
-        }
+        void update();
 
         template <typename Component>
         std::size_t size() const {
-            auto const& component { component_handler<Component>() };
-            return component.size();
+            return ComponentHolder<Component>::impl.size(id_);
         }
 
-    template <typename Injection, typename... Ts>
-    std::shared_ptr<Injection> inject(Ts&& ... params) {
-        return inject(std::make_shared<Injection>(std::forward<Ts>(params)...));
-    }
-
-    template <typename Injection>
-    std::shared_ptr<Injection> inject(std::shared_ptr<Injection> injection) {
-        _injections.emplace(typeid(Injection).hash_code(), injection);
-        return injection;
-    }
-
-    template <typename Injection>
-    std::shared_ptr<Injection> injection() {
-        ComponentId const component_id { typeid(Injection).hash_code() };
-        auto injection_iterator { _injections.find(component_id) };
-        if (injection_iterator == _injections.end())
-            assert(false);
-        return std::static_pointer_cast<Injection>(injection_iterator->second);
-    }
+    public:
+        static void register_component(IComponentHandler* component_handler);
 
     private:
-        template <typename Component>
-        ComponentHandler<Component>& component_handler() const {
-            ComponentId const component_id { typeid(Component).hash_code() };
-
-            if (!_components.contains(component_id)) {
-                auto component { std::make_shared<ComponentHandler<Component>>() };
-                _components.emplace(component_id, component);
-                return *component.get();
+        template <typename Component, typename... Components>
+        auto each() -> ComponentGenerator<std::tuple<Entity, Component&, Components&...>> {
+            for (auto& [entity_id, component]: ComponentHolder<Component>::impl.iter(id_)) {
+                if ((... && ComponentHolder<Components>::impl.has(id_, entity_id))) {
+                    std::tuple<Entity, Component&, Components&...> t {
+                        { entity_id, shared_from_this() }, component,
+                        ComponentHolder<Components>::impl.get_without_check(id_, entity_id)... };
+                    co_yield t;
+                }
             }
 
-            return *std::dynamic_pointer_cast<ComponentHandler<Component>>(_components[component_id]).get();
+            co_return;
+        }
+
+        template <typename Component, typename... Components>
+        auto each() const -> ComponentGenerator<std::tuple<Entity, Component const&, Components const&...>> {
+            for (auto& [entity_id, component]: ComponentHolder<Component>::impl.iter(id_)) {
+                if ((... && ComponentHolder<Components>::impl.has(id_, entity_id))) {
+                    std::tuple<Entity, Component const&, Components const&...> tuple {
+                        { entity_id, shared_from_this() }, component,
+                        ComponentHolder<Components>::impl.get_without_check(id_, entity_id)... };
+                    co_yield tuple;
+                }
+            }
+
+            co_return;
         }
 
         template <typename Component>
-        ComponentHandler<Component>& component_handler_lazy() {
-            ComponentId const component_id { typeid(Component).hash_code() };
-            return *std::dynamic_pointer_cast<ComponentHandler<Component>>(_components[component_id]).get();
+        auto iter() -> ComponentGenerator<std::pair<Entity, Component&>> {
+            for (auto& [entity_id, component]: ComponentHolder<Component>::impl.iter(id_)) {
+                std::pair<Entity, Component&> pair { { entity_id, shared_from_this() }, component };
+                co_yield pair;
+            }
+
+            co_return;
+        }
+
+        template <typename Component>
+        auto iter() const -> ComponentGenerator<std::pair<Entity, Component const&>> {
+            for (auto& [entity_id, component]: ComponentHolder<Component>::impl.iter(id_)) {
+                auto pair { std::make_pair<Entity, Component const&>({ entity_id, shared_from_this() }, component) };
+                co_yield pair;
+            }
+
+            co_return;
         }
 
     private:
-        mutable EntityId _next_entity_id {};
-        mutable std::unordered_map<ComponentId, std::shared_ptr<IComponentHandler>> _components;
-        std::unordered_map<InjectionId, std::shared_ptr<void>> _injections;
+        WorldId id_ { current_world_id_++ };
+        EntityId current_entity_id_ {};
+
+        std::unordered_map<std::size_t, std::shared_ptr<void>> _injections;
+
+        inline static WorldId current_world_id_ {};
+        inline static std::unordered_set<IComponentHandler*> components_;
     };
 }
 

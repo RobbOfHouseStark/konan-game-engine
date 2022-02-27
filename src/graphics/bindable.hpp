@@ -6,20 +6,20 @@
 namespace konan::graphics {
     using ReleaseCallback = void(*)(std::uint32_t);
 
-    struct Bindable {
-        Bindable() = default;
-        Bindable(Bindable const&) = delete;
-        Bindable& operator=(Bindable const&) = delete;
-        Bindable(Bindable&& rhs) noexcept;
-        Bindable& operator=(Bindable&& rhs) noexcept;
-        virtual ~Bindable();
+    struct IBindable {
+        IBindable() = default;
+        IBindable(IBindable const&) = delete;
+        IBindable& operator=(IBindable const&) = delete;
+        IBindable(IBindable&& rhs) noexcept;
+        IBindable& operator=(IBindable&& rhs) noexcept;
+        virtual ~IBindable();
 
         virtual void bind() = 0;
         virtual void unbind() = 0;
 
     protected:
-        std::uint32_t _id;
-        ReleaseCallback _release;
+        std::uint32_t id;
+        void(*release)(std::uint32_t);
     };
 }
 

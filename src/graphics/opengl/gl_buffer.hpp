@@ -10,12 +10,12 @@
 #include "bindable.hpp"
 
 namespace konan::graphics::opengl {
-    struct OpenGlBuffer : public Bindable {
+    struct OpenGlBuffer : public IBindable {
         template<typename T>
         OpenGlBuffer(std::vector<T> const& data, GLenum type)
             : _type { type }, _size { data.size() } {
             glGenBuffers(1, &_id);
-            _release = [](std::uint32_t id) { glDeleteBuffers(1, &id); };
+            release = [](std::uint32_t id) { glDeleteBuffers(1, &id); };
 
             glBindBuffer(_type, _id);
             glBufferData(type, data.size() * sizeof(T), data.data(), GL_STATIC_DRAW);

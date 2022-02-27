@@ -4,11 +4,10 @@
 #include <optional>
 
 #include "button.hpp"
+#include "ecs.hpp"
 #include "key.hpp"
 #include "mouse_move.hpp"
-#include "systems.hpp"
 #include "window.hpp"
-#include "world.hpp"
 
 namespace konan::engine {
     struct InputSystem : public ecs::IInitSystem,
@@ -18,9 +17,6 @@ namespace konan::engine {
 
     private:
         std::shared_ptr<graphics::Window> _window;
-
-        ecs::EntityId _input;
-
         double _previous_x {}, _previous_y {};
     };
 }

@@ -7,7 +7,7 @@
 #include "files.hpp"
 
 namespace konan::graphics {
-    struct Texture : public Bindable {
+    struct Texture : public IBindable {
     };
 }
 

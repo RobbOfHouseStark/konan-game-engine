@@ -2,13 +2,13 @@
 
 namespace konan::graphics::opengl {
     OpenGlTexture::OpenGlTexture(core::Tga const& tga) {
-        glGenTextures(1, &_id);
-        _release = [](std::uint32_t id) {
+        glGenTextures(1, &id);
+        release = [](std::uint32_t id) {
             glDeleteTextures(1, &id);
         };
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, _id);
+        glBindTexture(GL_TEXTURE_2D, id);
         glTexImage2D(GL_TEXTURE_2D, 0,
                      tga.alpha_channel() ? GL_RGBA : GL_RGB,
                      tga.width, tga.height, 0,
@@ -24,7 +24,7 @@ namespace konan::graphics::opengl {
     void OpenGlTexture::bind() {
         // TODO: change slot.
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, _id);
+        glBindTexture(GL_TEXTURE_2D, id);
     }
 
     void OpenGlTexture::unbind() {

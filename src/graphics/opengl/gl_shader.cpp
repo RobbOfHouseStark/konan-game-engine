@@ -53,8 +53,8 @@ namespace konan::graphics::opengl {
                                : _uniforms { std::move(uniforms) } {
         assert(sources.size() == shader_types.size());
 
-        _id = glCreateProgram();
-        _release = glDeleteProgram;
+        id = glCreateProgram();
+        release = glDeleteProgram;
 
         std::vector<std::uint32_t> shaders;
         for (int i {}; i < sources.size(); ++i)
@@ -70,7 +70,7 @@ namespace konan::graphics::opengl {
         assert(_uniforms.find(name.data()) != _uniforms.end());
         assert(right_name_for_type<glm::vec2>(_uniforms[name.data()]));
 
-        auto location { glGetUniformLocation(_id, name.data()) };
+        auto location { glGetUniformLocation(id, name.data()) };
         glUniform2f(location, data.x, data.y);
 
         _loaded_uniforms[name.data()] = true;
@@ -80,7 +80,7 @@ namespace konan::graphics::opengl {
         assert(_uniforms.find(name.data()) != _uniforms.end());
         assert(right_name_for_type<glm::vec3>(_uniforms[name.data()]));
 
-        auto location { glGetUniformLocation(_id, name.data()) };
+        auto location { glGetUniformLocation(id, name.data()) };
         glUniform3f(location, data.x, data.y, data.z);
 
         _loaded_uniforms[name.data()] = true;
@@ -90,7 +90,7 @@ namespace konan::graphics::opengl {
         assert(_uniforms.find(name.data()) != _uniforms.end());
         assert(right_name_for_type<glm::mat4>(_uniforms[name.data()]));
 
-        auto location { glGetUniformLocation(_id, name.data()) };
+        auto location { glGetUniformLocation(id, name.data()) };
         glUniformMatrix4fv(location, 1, GL_FALSE, &data[0][0]);
 
         _loaded_uniforms[name.data()] = true;
@@ -106,7 +106,7 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlShader::bind() {
-        glUseProgram(_id);
+        glUseProgram(id);
 
         for (auto& [name, loaded]: _loaded_uniforms)
             loaded = false;
@@ -118,11 +118,11 @@ namespace konan::graphics::opengl {
 
     void OpenGlShader::attach_shaders(std::vector<std::uint32_t> const& shaders) {
         for (auto shader: shaders)
-            glAttachShader(_id, shader);
-        glLinkProgram(_id);
-        glValidateProgram(_id);
+            glAttachShader(id, shader);
+        glLinkProgram(id);
+        glValidateProgram(id);
         for (auto shader: shaders) {
-            glDetachShader(_id, shader);
+            glDetachShader(id, shader);
             glDeleteShader(shader);
         }
     }
