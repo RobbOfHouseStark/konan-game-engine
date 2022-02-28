@@ -9,6 +9,7 @@
 
 namespace konan::engine {
     struct Model {
+        Model();
         Model(std::shared_ptr<graphics::Shader> shader,
               std::shared_ptr<graphics::Texture> texture,
               std::shared_ptr<graphics::VertexArray> vertex_array);

@@ -10,6 +10,7 @@
 
 namespace konan::engine {
     struct Camera {
+        Camera();
         Camera(float fov, float ratio, float near_clipping_plane, float far_clipping_plane,
                std::shared_ptr<graphics::Framebuffer> framebuffer);
 

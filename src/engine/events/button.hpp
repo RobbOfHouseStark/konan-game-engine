@@ -3,6 +3,7 @@
 
 namespace konan::engine {
     struct Button {
+        Button();
         Button(int id, int action, int mods);
 
     public:

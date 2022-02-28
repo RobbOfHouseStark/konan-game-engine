@@ -62,13 +62,15 @@ namespace konan::engine {
         ImGui::PopStyleVar();
 
         ImGui::Begin("Objects.");
-        for (auto& [entity, id]: _world->filter<Id>()) {
-            if (ImGui::Button(id.name.c_str()))
+        for (auto& [entity, transform]: _world->filter<Transform>()) {
+            std::string name = entity.has<Id>() ?
+                entity.get<Id>().name :
+                std::string("Entity: ") + std::to_string(entity.id());
+            if (ImGui::Button(name.c_str()))
                 _selected_entity = entity;
         }
         if (ImGui::Button("Create Entity.")) {
             auto entity { _world->new_entity() };
-            entity.replace<Id>("Default", std::string("Entity ") + std::to_string(entity.id()));
             entity.replace<Transform>(0.f, 0.f, 0.f);
         }
         ImGui::End();
@@ -78,6 +80,14 @@ namespace konan::engine {
             ImGuiInterpreter::interpret(_selected_entity.value(), _world);
 
             if (ImGui::TreeNode("Add Component.")) {
+                for (auto component: ecs::World::all()) {
+                    if (component->has(_world->id(), _selected_entity->id()))
+                        continue;
+
+                    if (ImGui::Button(component->name().c_str())) {
+                        component->add(_world->id(), _selected_entity->id());
+                    }
+                }
                 ImGui::TreePop();
             }
         }

@@ -5,8 +5,9 @@ namespace konan::engine {
     void IScriptable::run() {}
     void IScriptable::destroy() {}
 
-    void IScriptable::owner(ecs::Entity* owner) {
-        entity = owner;
+    void IScriptable::owners(ecs::Entity* owner_entity, std::shared_ptr<ecs::World> owner_world) {
+        entity = owner_entity;
+        world = owner_world;
     }
 
     Script::Script(ecs::Entity entity)
@@ -19,7 +20,7 @@ namespace konan::engine {
 
     void Script::init() {
         for (auto script: scripts) {
-            script->owner(&entity_);
+            script->owners(&entity_.value(), entity_.value().world());
             script->init();
         }
     }

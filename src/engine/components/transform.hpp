@@ -6,6 +6,7 @@
 
 namespace konan::engine {
     struct Transform {
+        Transform();
         Transform(float x, float y, float z);
         Transform(glm::vec3 const& position, glm::vec3 const& rotation, glm::vec3 const& scale);
 

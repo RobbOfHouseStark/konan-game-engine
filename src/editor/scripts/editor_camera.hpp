@@ -1,17 +1,19 @@
-#ifndef KGE_EDITOR_CAMERA_MOVEMENT_SYSTEM_HPP
-#define KGE_EDITOR_CAMERA_MOVEMENT_SYSTEM_HPP
+#ifndef KGE_EDITOR_CAMERA_HPP
+#define KGE_EDITOR_CAMERA_HPP
 
 #include "button.hpp"
 #include "camera.hpp"
+#include "ecs.hpp"
 #include "key.hpp"
 #include "mouse_move.hpp"
+#include "script.hpp"
 #include "transform.hpp"
-#include "ecs.hpp"
 
 namespace konan::editor {
-    struct CameraMovementSystem : public ecs::IRunSystem {
-        CameraMovementSystem(float speed, float rotation_speed);
+    struct EditorCamera : public engine::IScriptable {
+        EditorCamera(float speed, float rotation_speed);
 
+        void init() override;
         void run() override;
 
     private:
@@ -20,7 +22,9 @@ namespace konan::editor {
 
         bool _should_rotate {};
         bool _forward {}, _back {}, _left {}, _right {};
+
+        engine::Transform* _transform;
     };
 }
 
-#endif  // KGE_EDITOR_CAMERA_MOVEMENT_SYSTEM_HPP
+#endif  // KGE_EDITOR_CAMERA_HPP

@@ -2,6 +2,7 @@
 #define KGE_ENGINE_SCRIPT_HPP
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "ecs.hpp"
@@ -14,13 +15,15 @@ namespace konan::engine {
         virtual void run();
         virtual void destroy();
 
-        void owner(ecs::Entity* owner);
+        void owners(ecs::Entity* owner_entity, std::shared_ptr<ecs::World> owner_world);
 
     protected:
         ecs::Entity* entity;
+        std::shared_ptr<ecs::World> world;
     };
 
     struct Script {
+        Script() = default;
         explicit Script(ecs::Entity entity);
 
         template <typename T, typename... Ts>
@@ -39,7 +42,7 @@ namespace konan::engine {
         std::vector<std::shared_ptr<IScriptable>> scripts;
 
     private:
-        ecs::Entity entity_;
+        std::optional<ecs::Entity> entity_;
     };
 }
 

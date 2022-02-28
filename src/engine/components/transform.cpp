@@ -1,6 +1,9 @@
 #include "transform.hpp"
 
 namespace konan::engine {
+    Transform::Transform()
+        : Transform(0.f, 0.f, 0.f) {}
+
     Transform::Transform(float x, float y, float z)
         : Transform({ x, y, z }, {}, { 1.f, 1.f, 1.f }) {}
 

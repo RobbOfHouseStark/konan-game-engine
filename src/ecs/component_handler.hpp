@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -12,17 +13,16 @@ namespace konan::ecs {
     struct IComponentHandler {
         IComponentHandler();
 
+        virtual void add(WorldId world_id, EntityId entity_id) = 0;
         virtual bool has(WorldId world_id, EntityId entity_id) = 0;
         virtual void clear(WorldId world_id) = 0;
         virtual void del(WorldId world_id, EntityId entity_id) = 0;
 
-        void set_one_frame(WorldId world_id) {
-            one_frame.insert(world_id);
-        }
+        virtual std::size_t size(WorldId world_id) = 0;
+        virtual std::string name() = 0;
 
-        bool is_one_frame(WorldId world_id) {
-            return one_frame.contains(world_id);
-        }
+        void set_one_frame(WorldId world_id);
+        bool is_one_frame(WorldId world_id);
 
     protected:
         std::unordered_set<WorldId> one_frame;
@@ -30,20 +30,12 @@ namespace konan::ecs {
 
     template <typename Component>
     struct ComponentHandler : public IComponentHandler {
-        Component& get(WorldId world_id, EntityId entity_id) {
-            if constexpr (std::is_default_constructible_v<Component>) {
-                return components_[world_id][entity_id];
-            } else {
-                auto& world { components_[world_id] };
-                auto component_iterator { world.find(entity_id) };
-                assert(component_iterator != world.end());
-                return component_iterator->second;
-            }
+        void add(WorldId world_id, EntityId entity_id) override {
+            get(world_id, entity_id);
         }
 
-        Component& get_without_check(WorldId world_id, EntityId entity_id) {
-            auto component_iterator { components_[world_id].find(entity_id) };
-            return component_iterator->second;
+        Component& get(WorldId world_id, EntityId entity_id) {
+            return components_[world_id][entity_id];
         }
 
         template <typename... Ts>
@@ -76,12 +68,16 @@ namespace konan::ecs {
             return components_[world_id];
         }
 
-        std::size_t size(WorldId world_id) {
+        std::size_t size(WorldId world_id) override {
             return components_[world_id].size();
         }
 
+        std::string name() override {
+            return typeid(Component).name();
+        }
+
     private:
-        mutable std::unordered_map<WorldId , std::unordered_map<EntityId, Component>> components_;
+        mutable std::unordered_map<WorldId, std::unordered_map<EntityId, Component>> components_;
     };
 
     template <typename Component>

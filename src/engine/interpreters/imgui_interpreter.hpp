@@ -6,6 +6,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include "id.hpp"
+#include "model.hpp"
 #include "transform.hpp"
 #include "world.hpp"
 
@@ -36,6 +37,13 @@ namespace konan::engine {
                     ImGui::DragFloat("Ratio.", &(component.ratio), 0.01f, 0.f, 3.f);
                     ImGui::DragFloat("Near Clipping Plane.", &(component.near_clipping_plane));
                     ImGui::DragFloat("Far Clipping Plane..", &(component.far_clipping_plane));
+                    ImGui::TreePop();
+                }
+            }
+            if (entity.has<Model>()) {
+                auto& component { entity.get<Model>() };
+                if (ImGui::TreeNode("Model.")) {
+                    ImGui::Text("Model data.");
                     ImGui::TreePop();
                 }
             }

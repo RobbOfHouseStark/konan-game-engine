@@ -23,7 +23,15 @@ namespace konan::ecs {
         }
     }
 
+    WorldId World::id() const {
+        return id_;
+    }
+
     void World::register_component(IComponentHandler* component_handler) {
         components_.insert(component_handler);
+    }
+
+    std::unordered_set<IComponentHandler*> World::all() {
+        return components_;
     }
 }

@@ -40,6 +40,7 @@ namespace konan::editor {
                                        std::make_shared<graphics::opengl::OpenGlFramebuffer>(window->width(),
                                                                                              window->height()));
         camera.replace<engine::Transform>(-2.f, 2.f, -10.f);
+        camera.replace<engine::Script>(camera).add<EditorCamera>(.06f, .006f);
 
         auto wall1 { _world->new_entity() };
         wall1.replace<engine::Id>("Default", "Wall");
@@ -51,7 +52,6 @@ namespace konan::editor {
 
         _systems->add<engine::EventSystem>(_running);
         _systems->add<engine::InputSystem>();
-        _systems->add<CameraMovementSystem>(.06f, .004f);
         _systems->add<engine::ScriptSystem>(started_);
         _systems->add<engine::RenderSystem>(renderer);
     }

@@ -100,8 +100,11 @@ namespace konan::ecs {
             return ComponentHolder<Component>::impl.size(id_);
         }
 
+        WorldId id() const;
+
     public:
         static void register_component(IComponentHandler* component_handler);
+        static std::unordered_set<IComponentHandler*> all();
 
     private:
         template <typename Component, typename... Components>
@@ -110,7 +113,7 @@ namespace konan::ecs {
                 if ((... && ComponentHolder<Components>::impl.has(id_, entity_id))) {
                     std::tuple<Entity, Component&, Components&...> t {
                         { entity_id, shared_from_this() }, component,
-                        ComponentHolder<Components>::impl.get_without_check(id_, entity_id)... };
+                        ComponentHolder<Components>::impl.get(id_, entity_id)... };
                     co_yield t;
                 }
             }

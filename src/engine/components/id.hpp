@@ -5,6 +5,7 @@
 
 namespace konan::engine {
     struct Id {
+        Id();
         Id(std::string tag, std::string name);
 
     public:

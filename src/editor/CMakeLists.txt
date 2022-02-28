@@ -1,4 +1,4 @@
-add_library(editor editor.cpp editor.hpp systems/camera_movement_system.cpp systems/camera_movement_system.hpp scripts/editor_cube.cpp scripts/editor_cube.hpp)
+add_library(editor editor.cpp editor.hpp scripts/editor_cube.cpp scripts/editor_cube.hpp scripts/editor_camera.cpp scripts/editor_camera.hpp)
 target_include_directories(
         editor INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
         editor PUBLIC ../../deps/yaml-cpp/include

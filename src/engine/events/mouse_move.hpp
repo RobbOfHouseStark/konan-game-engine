@@ -3,6 +3,7 @@
 
 namespace konan::engine {
     struct MouseMove {
+        MouseMove();
         MouseMove(double dx, double dy);
 
     public:

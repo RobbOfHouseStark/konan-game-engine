@@ -3,6 +3,7 @@
 
 namespace konan::engine {
     struct Key {
+        Key();
         Key(int id, int scan_code, int action, int mods);
 
     public:
