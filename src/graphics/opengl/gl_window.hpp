@@ -24,7 +24,9 @@ namespace konan::graphics::opengl {
         OpenGlWindow(std::uint16_t width, std::uint16_t height, std::string title, std::vector<WindowHint> const& hints);
         ~OpenGlWindow() final;
 
-        void init_imgui() override;
+        void imgui_init() override;
+        void imgui_begin_frame() override;
+        void imgui_end_frame() override;
 
         bool should_close() const override;
         void clear() override;

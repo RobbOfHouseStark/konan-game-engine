@@ -13,25 +13,24 @@ namespace konan::engine {
     Script::Script(ecs::Entity entity)
         : entity_ { entity } {}
 
-    Script& Script::add(std::shared_ptr<IScriptable> script) {
-        scripts.push_back(script);
+    Script& Script::add(std::shared_ptr<IScriptable> script, std::string const& group) {
+        script->owners(&entity_.value(), entity_.value().world());
+        scripts[group].push_back(script);
         return *this;
     }
 
-    void Script::init() {
-        for (auto script: scripts) {
-            script->owners(&entity_.value(), entity_.value().world());
+    void Script::init(std::string const& group) {
+        for (auto script: scripts[group])
             script->init();
-        }
     }
 
-    void Script::run() {
-        for (auto script: scripts)
+    void Script::run(std::string const& group) {
+        for (auto script: scripts[group])
             script->run();
     }
 
-    void Script::destroy() {
-        for (auto script: scripts)
+    void Script::destroy(std::string const& group) {
+        for (auto script: scripts[group])
             script->destroy();
     }
 }

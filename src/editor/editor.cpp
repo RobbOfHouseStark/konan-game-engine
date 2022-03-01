@@ -36,11 +36,11 @@ namespace konan::editor {
 
         auto camera { _world->new_entity() };
         camera.replace<engine::Id>("Default", "Camera");
-        camera.replace<engine::Camera>(45.f, _world->injection<graphics::Window>()->ration(), .1f, 500.f,
-                                       std::make_shared<graphics::opengl::OpenGlFramebuffer>(window->width(),
-                                                                                             window->height()));
+        camera.replace<engine::Camera>(45.f, _world->injection<graphics::Window>()->ration(), .1f, 500.f);
         camera.replace<engine::Transform>(-2.f, 2.f, -10.f);
-        camera.replace<engine::Script>(camera).add<EditorCamera>(.06f, .006f);
+        camera.replace<engine::Script>(camera).add<EditorCamera>(.06f, .006f).add(std::make_shared<EditorUI>(), "UI");
+        camera.replace<engine::RenderData>(std::make_shared<graphics::opengl::OpenGlFramebuffer>(window->width(),
+                                                                                                 window->height()));
 
         auto wall1 { _world->new_entity() };
         wall1.replace<engine::Id>("Default", "Wall");

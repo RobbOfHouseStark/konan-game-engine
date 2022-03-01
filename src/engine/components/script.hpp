@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <optional>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "ecs.hpp"
@@ -28,18 +30,17 @@ namespace konan::engine {
 
         template <typename T, typename... Ts>
         Script& add(Ts&& ... params) {
-            scripts.emplace_back(std::make_shared<T>(std::forward<Ts>(params)...));
-            return *this;
+            return add(std::make_shared<T>(std::forward<Ts>(params)...));
         }
 
-        Script& add(std::shared_ptr<IScriptable> script);
+        Script& add(std::shared_ptr<IScriptable> script, std::string const& group = "");
 
-        void init();
-        void run();
-        void destroy();
+        void init(std::string const& group = "");
+        void run(std::string const& group = "");
+        void destroy(std::string const& group = "");
 
     public:
-        std::vector<std::shared_ptr<IScriptable>> scripts;
+        std::unordered_map<std::string, std::vector<std::shared_ptr<IScriptable>>> scripts;
 
     private:
         std::optional<ecs::Entity> entity_;

@@ -15,7 +15,9 @@ namespace konan::graphics {
         Window(std::uint16_t width, std::uint16_t height, std::string title);
         virtual ~Window() = default;
 
-        virtual void init_imgui() = 0;
+        virtual void imgui_init() = 0;
+        virtual void imgui_begin_frame() = 0;
+        virtual void imgui_end_frame() = 0;
 
         std::uint16_t width() const;
         std::uint16_t height() const;

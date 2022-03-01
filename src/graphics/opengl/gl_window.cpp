@@ -99,7 +99,7 @@ namespace konan::graphics::opengl {
         glfwDestroyWindow(_window);
     }
 
-    void OpenGlWindow::init_imgui() {
+    void OpenGlWindow::imgui_init() {
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
 
@@ -109,6 +109,17 @@ namespace konan::graphics::opengl {
 
         ImGui_ImplGlfw_InitForOpenGL(_window, true);
         ImGui_ImplOpenGL3_Init("#version 330");
+    }
+
+    void OpenGlWindow::imgui_begin_frame() {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+    }
+
+    void OpenGlWindow::imgui_end_frame() {
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
     bool OpenGlWindow::should_close() const {

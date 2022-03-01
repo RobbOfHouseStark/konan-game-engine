@@ -1,4 +1,12 @@
-add_library(editor editor.cpp editor.hpp scripts/editor_cube.cpp scripts/editor_cube.hpp scripts/editor_camera.cpp scripts/editor_camera.hpp)
+add_library(
+        editor
+        editor.cpp editor.hpp
+        interpreters/imgui_interpreter.hpp
+        scripts/editor_cube.cpp scripts/editor_cube.hpp
+        scripts/editor_camera.cpp scripts/editor_camera.hpp
+        scripts/editor_ui.cpp scripts/editor_ui.hpp
+)
+
 target_include_directories(
         editor INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
         editor PUBLIC ../../deps/yaml-cpp/include
