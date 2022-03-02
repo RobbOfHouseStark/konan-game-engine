@@ -9,9 +9,9 @@ add_library(
 
 target_include_directories(
         editor INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
-        editor PUBLIC ../../deps/yaml-cpp/include
+        editor PUBLIC ../../deps/json/include
 )
-target_link_libraries(editor PRIVATE yaml-cpp core ecs engine graphics)
+target_link_libraries(editor PRIVATE core ecs engine graphics)
 
 add_custom_command(
         TARGET editor POST_BUILD
@@ -39,4 +39,11 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/../../resources/config.yaml
         ${CMAKE_CURRENT_BINARY_DIR}/../config.yaml
+)
+
+add_custom_command(
+        TARGET editor POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../resources/config.json
+        ${CMAKE_CURRENT_BINARY_DIR}/../config.json
 )

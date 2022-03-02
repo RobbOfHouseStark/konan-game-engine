@@ -5,15 +5,12 @@
 #include "script.hpp"
 
 namespace konan::engine {
-    struct ScriptSystem : public ecs::IRunSystem,
+    struct ScriptSystem : public ecs::IInitSystem,
+                          public ecs::IRunSystem,
                           public ecs::IDestroySystem {
-    explicit ScriptSystem(bool& started);
-
-    void run() override;
-    void destroy() override;
-
-    private:
-        bool& started_;
+        void init() override;
+        void run() override;
+        void destroy() override;
     };
 }
 

@@ -1,7 +1,7 @@
 #ifndef KGE_EDITOR_EDITOR_HPP
 #define KGE_EDITOR_EDITOR_HPP
 
-#include <yaml-cpp/yaml.h>
+#include "nlohmann/json.hpp"
 
 #include "exceptions.hpp"
 #include "files.hpp"
@@ -28,9 +28,6 @@
 namespace konan::editor {
     struct Editor : public ecs::Scene {
         Editor();
-
-    private:
-        bool started_ { true };
     };
 }
 

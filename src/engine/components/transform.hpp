@@ -1,6 +1,9 @@
 #ifndef KGE_ENGINE_TRANSFORM_HPP
 #define KGE_ENGINE_TRANSFORM_HPP
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 

@@ -7,27 +7,32 @@ namespace konan::editor {
         // TODO: unbind after construction.
         // TODO: framebuffer component to camera, renderer taking arguments.
 
-        YAML::Node config { YAML::LoadFile("config.yaml") };
+        nlohmann::json settings;
+
+        std::ifstream sfile { "config.json" };
+        sfile >> settings;
+        sfile.close();
+
         std::vector<std::string> shader_types;
         std::vector<std::uint32_t> shader_ids;
-        for (int i {}; i < config["opengl"]["shader-types"].size(); ++i) {
-            shader_types.push_back(config["opengl"]["shader-types"][i]["name"].as<std::string>());
-            shader_ids.push_back(config["opengl"]["shader-types"][i]["glad-id"].as<std::uint32_t>());
+        for (int i {}; i < settings["opengl"]["shader-types"].size(); ++i) {
+            shader_types.push_back(settings["opengl"]["shader-types"][i]["name"].get<std::string>());
+            shader_ids.push_back(settings["opengl"]["shader-types"][i]["glad-id"].get<std::uint32_t>());
         }
         std::vector<std::uint8_t> vertex_layout_data;
-        for (int i {}; i < config["opengl"]["vertex-layout"].size(); ++i)
-            vertex_layout_data.push_back(config["opengl"]["vertex-layout"][i].as<std::uint8_t>());
+        for (int i {}; i < settings["opengl"]["vertex-layout"].size(); ++i)
+            vertex_layout_data.push_back(settings["opengl"]["vertex-layout"][i].get<std::uint8_t>());
 
         core::GlslData glsl_data { core::load_glsl("resources/shaders/default.glsl", shader_types) };
         auto brick_model { core::load_obj("resources/models/bricks.obj") };
 
         auto window { _world->inject<graphics::Window>(graphics::opengl::make_window(
-                config["window"]["size"]["x"].as<int>(),
-                config["window"]["size"]["y"].as<int>(),
-                config["window"]["title"].as<std::string>(),
-                config["window"]["msaa"].as<std::uint8_t>(),
-                    config["opengl"]["version"]["major"].as<std::uint8_t>(),
-                    config["opengl"]["version"]["minor"].as<std::uint8_t>())) };
+            settings["window"]["size"]["x"].get<int>(),
+            settings["window"]["size"]["y"].get<int>(),
+            settings["window"]["title"].get<std::string>(),
+            settings["window"]["msaa"].get<std::uint8_t>(),
+            settings["opengl"]["version"]["major"].get<std::uint8_t>(),
+            settings["opengl"]["version"]["minor"].get<std::uint8_t>())) };
 
         auto shader { std::make_shared<graphics::opengl::OpenGlShader>(glsl_data.data, shader_ids, glsl_data.uniforms) };
         auto texture { std::make_shared<graphics::opengl::OpenGlTexture>(core::load_tga("resources/textures/bricks.tga")) };
@@ -52,7 +57,7 @@ namespace konan::editor {
 
         _systems->add<engine::EventSystem>(_running);
         _systems->add<engine::InputSystem>();
-        _systems->add<engine::ScriptSystem>(started_);
+        _systems->add<engine::ScriptSystem>();
         _systems->add<engine::RenderSystem>(renderer);
     }
 }

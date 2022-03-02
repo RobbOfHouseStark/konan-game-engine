@@ -21,7 +21,7 @@ namespace konan::engine {
     }
 
     glm::vec3 Transform::right() const {
-        return { std::sin(rotation.y - M_PI_2), 0, std::cos(rotation.y - M_PI_2) };
+        return { glm::sin(rotation.y - M_PI_2), 0, glm::cos(rotation.y - M_PI_2) };
     }
 
     glm::vec3 Transform::right(float distance) const {

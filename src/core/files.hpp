@@ -1,6 +1,7 @@
 #ifndef KGE_CORE_FILES_HPP
 #define KGE_CORE_FILES_HPP
 
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <fstream>

@@ -1,16 +1,12 @@
 #include "script_system.hpp"
 
 namespace konan::engine {
-    ScriptSystem::ScriptSystem(bool& started)
-        : started_ { started } {}
-
-    void ScriptSystem::run() {
-        if (!started_)
-            return;
-
+    void ScriptSystem::init() {
         for (auto& [_, script]: _world->filter<Script>())
             script.init();
+    }
 
+    void ScriptSystem::run() {
         for (auto& [_, script]: _world->filter<Script>())
             script.run();
     }

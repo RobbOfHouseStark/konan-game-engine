@@ -13,8 +13,9 @@ namespace {
     }
 
     std::shared_ptr<konan::graphics::opengl::OpenGlWindow> init_window(std::uint16_t width, std::uint16_t height,
-                                                         std::string const& title, std::uint8_t msaa,
-                                                         std::uint8_t major_version, std::uint8_t minor_version) {
+                                                                       std::string const& title, std::uint8_t msaa,
+                                                                       std::uint8_t major_version,
+                                                                       std::uint8_t minor_version) {
         // TODO: config.
         std::vector<konan::graphics::opengl::WindowHint> hints {
             std::make_pair(GLFW_SAMPLES, msaa),
@@ -32,41 +33,44 @@ namespace {
             throw konan::core::GlfwError("Failed to initialize GLAD.");
     }
 
-    void input_callback(bool insert, GLFWwindow* window, int id, int scan_code, int action, int mods, int func_id,
-                        konan::graphics::MouseButtonCallback mbc = nullptr,
-                        konan::graphics::KeyCallback kc = nullptr,
-                        bool delete_world = false) {
-        static std::unordered_map<GLFWwindow*,
-            std::pair<konan::graphics::MouseButtonCallback, konan::graphics::KeyCallback>> s_windows_callbacks;
+    // void input_callback(bool insert, GLFWwindow* window, int id, int scan_code, int action, int mods, int func_id,
+    //                     konan::graphics::MouseButtonCallback mbc = nullptr,
+    //                     konan::graphics::KeyCallback kc = nullptr,
+    //                     bool delete_world = false) {
+    //     static std::unordered_map<GLFWwindow*,
+    //         std::pair<konan::graphics::MouseButtonCallback, konan::graphics::KeyCallback>> s_windows_callbacks {};
+    //
+    //     if (delete_world) {
+    //         s_windows_callbacks.clear();
+    //         return;
+    //     }
+    //
+    //     if (insert) {
+    //         if (mbc != nullptr) {
+    //             s_windows_callbacks[window].first = mbc;
+    //         }
+    //         if (kc != nullptr) {
+    //             s_windows_callbacks[window].second = kc;
+    //         }
+    //     } else {
+    //         if (func_id == 0) {
+    //             s_windows_callbacks[window].first(id, action, id);
+    //         } else {
+    //             s_windows_callbacks[window].second(id, scan_code, action, id);
+    //         }
+    //     }
+    // }
+    //
+    // void button_callback(GLFWwindow* window, int id, int action, int mods) {
+    //     input_callback(false, window, id, 0, action, mods, 0);
+    // }
+    //
+    // void key_callback(GLFWwindow* window, int id, int scan_code, int action, int mods) {
+    //     input_callback(false, window, id, scan_code, action, mods, 1);
+    // }
 
-        if (delete_world) {
-            s_windows_callbacks.erase(window);
-            return;
-        }
-
-        if (insert) {
-            if (mbc != nullptr) {
-                s_windows_callbacks[window].first = mbc;
-            }
-            if (kc != nullptr) {
-                s_windows_callbacks[window].second = kc;
-            }
-        } else {
-            if (func_id == 0) {
-                s_windows_callbacks[window].first(id, action, id);
-            } else {
-                s_windows_callbacks[window].second(id, scan_code, action, id);
-            }
-        }
-    }
-
-    void button_callback(GLFWwindow* window, int id, int action, int mods) {
-        input_callback(false, window, id, 0, action, mods, 0);
-    }
-
-    void key_callback(GLFWwindow* window, int id, int scan_code, int action, int mods) {
-        input_callback(false, window, id, scan_code, action, mods, 1);
-    }
+    konan::graphics::MouseButtonCallback s_mbc;
+    konan::graphics::KeyCallback s_kc;
 }
 
 namespace konan::graphics::opengl {
@@ -95,7 +99,6 @@ namespace konan::graphics::opengl {
     }
 
     OpenGlWindow::~OpenGlWindow() {
-        input_callback(false, _window, 0, 0, 0, 0, 0, nullptr, nullptr, true);
         glfwDestroyWindow(_window);
     }
 
@@ -103,7 +106,8 @@ namespace konan::graphics::opengl {
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
 
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGuiIO& io = ImGui::GetIO();
+        (void) io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
@@ -152,7 +156,7 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlWindow::cull_face(bool on) {
-        auto func {on ? glEnable : glDisable};
+        auto func { on ? glEnable : glDisable };
         func(GL_CULL_FACE);
     }
 
@@ -162,19 +166,19 @@ namespace konan::graphics::opengl {
     }
 
     void OpenGlWindow::mouse_button_callback(MouseButtonCallback mbc) {
-        input_callback(true, _window, 0, 0, 0, 0, 0, mbc);
+        s_mbc = mbc;
         glfwSetMouseButtonCallback(_window,
-            [](GLFWwindow* window, int id, int action, int mods) {
-                input_callback(false, window, id, 0, action, mods, 0);
-            });
+                                   [](GLFWwindow* window, int id, int action, int mods) {
+                                       s_mbc(id, action, mods);
+                                   });
     }
 
     void OpenGlWindow::key_callback(KeyCallback kc) {
-        input_callback(true, _window, 0, 0, 0, 0, 1, nullptr, kc);
+        s_kc = kc;
         glfwSetKeyCallback(_window,
-                                   [](GLFWwindow* window, int id, int scan_code, int action, int mods) {
-                                       input_callback(false, window, id, scan_code, action, mods, 1);
-                                   });
+                           [](GLFWwindow* window, int id, int scan_code, int action, int mods) {
+                               s_kc(id, scan_code, action, mods);
+                           });
     }
 
     void OpenGlWindow::mouse_position(double x, double y) {
