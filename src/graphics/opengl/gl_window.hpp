@@ -13,8 +13,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "utility.hpp"
-#include "exceptions.hpp"
+#include "core/exceptions.hpp"
+#include "core/utility.hpp"
+
 #include "window.hpp"
 
 namespace konan::graphics::opengl {

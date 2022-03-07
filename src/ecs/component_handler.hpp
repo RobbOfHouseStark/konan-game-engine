@@ -13,11 +13,13 @@ namespace konan::ecs {
     struct IComponentHandler {
         IComponentHandler();
 
-        virtual void add(WorldId world_id, EntityId entity_id) = 0;
+        virtual void add(WorldId world_id, EntityId entity_id, void* factory = nullptr) = 0;
         virtual bool has(WorldId world_id, EntityId entity_id) = 0;
         virtual void clear(WorldId world_id) = 0;
         virtual void del(WorldId world_id, EntityId entity_id) = 0;
 
+        virtual bool default_constructable() = 0;
+        virtual std::size_t id() = 0;
         virtual std::size_t size(WorldId world_id) = 0;
         virtual std::string name() = 0;
 
@@ -30,12 +32,24 @@ namespace konan::ecs {
 
     template <typename Component>
     struct ComponentHandler : public IComponentHandler {
-        void add(WorldId world_id, EntityId entity_id) override {
-            get(world_id, entity_id);
+        void add(WorldId world_id, EntityId entity_id, void* factory = nullptr) override {
+            if (factory == nullptr) {
+                assert(std::is_default_constructible_v<Component>);
+                get(world_id, entity_id);
+                return;
+            }
+
+            replace(world_id, entity_id, static_cast<Component(*)()>(factory)());
         }
 
         Component& get(WorldId world_id, EntityId entity_id) {
-            return components_[world_id][entity_id];
+            if constexpr (std::is_default_constructible_v<Component>) {
+                return components_[world_id][entity_id];
+            } else {
+                auto component_iterator { components_[world_id].find(entity_id) };
+                assert(component_iterator != components_[world_id].end());
+                return component_iterator->second;
+            }
         }
 
         template <typename... Ts>
@@ -66,6 +80,14 @@ namespace konan::ecs {
 
         std::unordered_map<EntityId, Component>& iter(WorldId world_id) {
             return components_[world_id];
+        }
+
+        bool default_constructable() override {
+            return std::is_default_constructible_v<Component>;
+        }
+
+        std::size_t id() override {
+            return typeid(Component).hash_code();
         }
 
         std::size_t size(WorldId world_id) override {

@@ -1504,7 +1504,7 @@ Additional matrix inverse functions.
 
 `<glm/gtc/matrix_inverse.hpp>` need to be included to use these features.
 
-### <a name="section4_9"></a> 4.9. GLM\_GTC\_matrix\_transform
+### <a name="section4_9"></a> 4.9. GLM\_GTC\_matrix\transform_
 
 Matrix transformation functions that follow the OpenGL fixed-function conventions.
 
@@ -1689,7 +1689,7 @@ glm::mat4 glm::rotate(glm::mat4 const& m, float angle, glm::vec3 const& axis);
 glm::dmat4 glm::rotate(glm::dmat4 const& m, double angle, glm::dvec3 const& axis);
 ```
 
-From `GLM_GTC_matrix_transform` extension: &lt;glm/gtc/matrix\_transform.hpp&gt;
+From `GLM_GTC_matrix_transform` extension: &lt;glm/gtc/matrix\transform_.hpp&gt;
 
 [***glScale{f, d}:***](http://www.opengl.org/sdk/docs/man2/xhtml/glScale.xml)
 
@@ -1698,7 +1698,7 @@ glm::mat4 glm::scale(glm::mat4 const& m, glm::vec3 const& factors);
 glm::dmat4 glm::scale(glm::dmat4 const& m, glm::dvec3 const& factors);
 ```
 
-From `GLM_GTC_matrix_transform` extension: &lt;glm/gtc/matrix\_transform.hpp&gt;
+From `GLM_GTC_matrix_transform` extension: &lt;glm/gtc/matrix\transform_.hpp&gt;
 
 [***glTranslate{f, d}:***](https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml)
 
@@ -1707,7 +1707,7 @@ glm::mat4 glm::translate(glm::mat4 const& m, glm::vec3 const& translation);
 glm::dmat4 glm::translate(glm::dmat4 const& m, glm::dvec3 const& translation);
 ```
 
-From `GLM_GTC_matrix_transform` extension: &lt;glm/gtc/matrix\_transform.hpp&gt;
+From `GLM_GTC_matrix_transform` extension: &lt;glm/gtc/matrix\transform_.hpp&gt;
 
 [***glLoadIdentity:***](https://www.opengl.org/sdk/docs/man2/xhtml/glLoadIdentity.xml)
 

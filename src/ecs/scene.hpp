@@ -6,13 +6,17 @@
 
 namespace konan::ecs {
     struct Scene {
-        void run();
+        explicit Scene(bool* running);
+
+        void init();
+        void run(double dt);
+        void destroy();
 
     protected:
-        bool _running { true };
+        bool* running {};
 
-        std::shared_ptr<World> _world { std::make_shared<World>() };
-        std::shared_ptr<Systems> _systems { std::make_shared<Systems>(_world) };
+        std::shared_ptr<World> world;
+        std::shared_ptr<Systems> systems;
     };
 }
 

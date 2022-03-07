@@ -16,24 +16,24 @@ namespace {
 
 namespace konan::engine {
     void InputSystem::init() {
-        _world->one_frame<Button>();
-        _world->one_frame<Key>();
-        _world->one_frame<MouseMove>();
+        world->one_frame<Button>();
+        world->one_frame<Key>();
+        world->one_frame<MouseMove>();
 
-        _window = _world->injection<graphics::Window>();
-        _window->mouse_button_callback(mouse_button_callback);
-        _window->key_callback(key_callback);
+        window_ = world->injection<graphics::Window>();
+        window_->mouse_button_callback(mouse_button_callback);
+        window_->key_callback(key_callback);
     }
 
-    void InputSystem::run() {
-        static ecs::Entity input { _world->new_entity() };
+    void InputSystem::run(double dt) {
+        static ecs::Entity input { world->new_entity() };
 
-        auto [x, y] = _window->mouse_position();
-        auto dx { x - _previous_x }, dy { y - _previous_y };
+        auto [x, y] = window_->mouse_position();
+        auto dx { x - previous_x_ }, dy { y - previous_y_ };
         if (dx != 0 || dy != 0) {
             input.replace<MouseMove>(dx, dy);
-            _previous_x = x;
-            _previous_y = y;
+            previous_x_ = x;
+            previous_y_ = y;
         }
 
         if (s_button.has_value()) {

@@ -14,15 +14,15 @@ namespace konan::core {
 
     struct Exit : public KonanError {
         explicit Exit(int code = 0)
-            : _code { code } {
+            : code_ { code } {
         }
 
         int code() const {
-            return _code;
+            return code_;
         }
 
     private:
-        int _code;
+        int code_;
     };
 
     struct FileError : public KonanError {

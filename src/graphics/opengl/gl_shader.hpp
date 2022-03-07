@@ -11,7 +11,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
 
-#include "exceptions.hpp"
+#include "core/exceptions.hpp"
+
 #include "shader.hpp"
 
 namespace konan::graphics::opengl {

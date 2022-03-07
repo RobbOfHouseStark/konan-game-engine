@@ -1,17 +1,22 @@
 #include "event_system.hpp"
+#include "core/logging.hpp"
 
 namespace konan::engine {
-    EventSystem::EventSystem(bool& running)
-        : _running { running } {}
+    EventSystem::EventSystem(bool* running)
+        : running_ { running } {}
 
     void EventSystem::init() {
-        window_ = _world->injection<graphics::Window>();
+        window_ = world->injection<graphics::Window>();
     }
 
-    void EventSystem::run() {
+    void EventSystem::run(double dt) {
         window_->poll_events();
-        if (window_->should_close()) {
-            _running = false;
+        if (window_->should_close())
+            *running_ = false;
+
+        for (auto& [_, key]: world->filter<Key>()) {
+            if (key.id == 'Q')
+                *running_ = false;
         }
     }
 }

@@ -2,46 +2,46 @@
 
 namespace konan::editor {
     EditorCamera::EditorCamera(float speed, float rotation_speed)
-        : _speed { speed }, _rotation_speed { rotation_speed } {}
+        : speed_ { speed }, rotation_speed_ { rotation_speed } {}
 
     void EditorCamera::init() {
-        _transform = &entity->get<engine::Transform>();
+        transform_ = &entity->get<engine::Transform>();
     }
 
     void EditorCamera::run() {
         for (auto& [_, button]: world->filter<engine::Button>()) {
             // TODO: move to config.
             if (button.id == 1)
-                _should_rotate = static_cast<bool>(button.action);
+                should_rotate_ = static_cast<bool>(button.action);
         }
 
-        if (_should_rotate) {
+        if (should_rotate_) {
             for (auto& [_, movement]: world->filter<engine::MouseMove>()) {
                 // TODO: chg float to double everywhere.
-                _transform->rotation.y -= static_cast<float>(movement.dx) * _rotation_speed;
-                _transform->rotation.x += static_cast<float>(movement.dy) * _rotation_speed;
+                transform_->rotation.y -= static_cast<float>(movement.dx) * rotation_speed_;
+                transform_->rotation.x += static_cast<float>(movement.dy) * rotation_speed_;
             }
         }
 
         for (auto& [_, key]: world->filter<engine::Key>()) {
             // TODO: move to config.
             if (key.id == 'W')
-                _forward = static_cast<bool>(key.action);
+                forward_ = static_cast<bool>(key.action);
             if (key.id == 'S')
-                _back = static_cast<bool>(key.action);
+                back_ = static_cast<bool>(key.action);
             if (key.id == 'A')
-                _left = static_cast<bool>(key.action);
+                left_ = static_cast<bool>(key.action);
             if (key.id == 'D')
-                _right = static_cast<bool>(key.action);
+                right_ = static_cast<bool>(key.action);
         }
 
-        if (_forward)
-            _transform->move_forward(_speed);
-        if (_back)
-            _transform->move_forward(-_speed);
-        if (_left)
-            _transform->move_right(-_speed);
-        if (_right)
-            _transform->move_right(_speed);
+        if (forward_)
+            transform_->move_forward(speed_);
+        if (back_)
+            transform_->move_forward(-speed_);
+        if (left_)
+            transform_->move_right(-speed_);
+        if (right_)
+            transform_->move_right(speed_);
     }
 }

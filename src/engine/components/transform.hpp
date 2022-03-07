@@ -27,15 +27,15 @@ namespace konan::engine {
         glm::mat4 view_matrix() const;
         glm::mat4 model_matrix() const;
 
-    private:
-        glm::mat4 translation_matrix() const;
-        glm::mat4 rotation_matrix() const;
-        glm::mat4 scale_matrix() const;
-
     public:
         glm::vec3 position;
         glm::vec3 rotation;
         glm::vec3 scale;
+
+    private:
+        glm::mat4 translation_matrix() const;
+        glm::mat4 rotation_matrix() const;
+        glm::mat4 scale_matrix() const;
     };
 }
 

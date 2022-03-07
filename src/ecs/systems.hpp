@@ -11,11 +11,11 @@
 
 namespace konan::ecs {
     struct ISystem {
-        void world(std::shared_ptr<World> world);
+        void set_world(std::shared_ptr<World> owner);
         virtual ~ISystem() = default;
 
     protected:
-        std::shared_ptr<World> _world;
+        std::shared_ptr<World> world;
     };
 
     struct IInitSystem : virtual ISystem {
@@ -23,7 +23,7 @@ namespace konan::ecs {
     };
 
     struct IRunSystem : virtual ISystem {
-        virtual void run() = 0;
+        virtual void run(double dt) = 0;
     };
 
     struct IDestroySystem : virtual ISystem {
@@ -33,8 +33,8 @@ namespace konan::ecs {
     struct Systems : public IInitSystem,
                      public IRunSystem,
                      public IDestroySystem {
-        explicit Systems(std::shared_ptr<World> owner) {
-            world(owner);
+        explicit Systems(std::shared_ptr<World> world) {
+            set_world(world);
         }
 
         template <typename System, typename... Ts>
@@ -48,38 +48,38 @@ namespace konan::ecs {
         void add(std::shared_ptr<System> system) {
             static_assert(std::is_convertible_v<System, ISystem>, "System must be derived from ISystem.");
 
-            system->world(_world);
+            system->set_world(world);
 
             if constexpr (std::is_base_of_v<IInitSystem, System>) {
-                _init_systems.push_back(system);
+                init_systems_.push_back(system);
             }
             if constexpr (std::is_base_of_v<IRunSystem, System>) {
-                _run_systems.push_back(system);
+                run_systems_.push_back(system);
             }
             if constexpr (std::is_base_of_v<IDestroySystem, System>) {
-                _destroy_systems.push_back(system);
+                destroy_systems_.push_back(system);
             }
         }
 
         void init() override {
-            for (auto system: _init_systems)
+            for (auto system: init_systems_)
                 system->init();
         }
 
-        void run() override {
-            for (auto system: _run_systems)
-                system->run();
+        void run(double dt) override {
+            for (auto system: run_systems_)
+                system->run(dt);
         }
 
         void destroy() override {
-            for (auto system: _destroy_systems)
+            for (auto system: destroy_systems_)
                 system->destroy();
         }
 
     private:
-        std::vector<std::shared_ptr<IInitSystem>> _init_systems;
-        std::vector<std::shared_ptr<IRunSystem>> _run_systems;
-        std::vector<std::shared_ptr<IDestroySystem>> _destroy_systems;
+        std::vector<std::shared_ptr<IInitSystem>> init_systems_;
+        std::vector<std::shared_ptr<IRunSystem>> run_systems_;
+        std::vector<std::shared_ptr<IDestroySystem>> destroy_systems_;
     };
 }
 

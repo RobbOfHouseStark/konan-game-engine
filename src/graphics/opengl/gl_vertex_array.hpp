@@ -10,7 +10,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "files.hpp"
+#include "core/files.hpp"
+
 #include "gl_buffer.hpp"
 #include "vertex_array.hpp"
 

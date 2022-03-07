@@ -48,6 +48,12 @@ namespace konan::ecs {
 
         void del(EntityId entity_id);
 
+        template <typename Interpreter>
+        void all() {
+            for (auto component: components_)
+                component->all(Interpreter::interpret);
+        }
+
         template <typename Component, typename... Components>
         decltype(auto) filter() {
             if constexpr (sizeof...(Components) == 0) {
@@ -72,19 +78,19 @@ namespace konan::ecs {
 
         template <typename Injection, typename... Ts>
         void inject(Ts&& ... params) {
-            _injections.emplace(typeid(Injection).hash_code(), std::make_shared<Injection>(std::forward<Ts>(params)...));
+            injections_.emplace(typeid(Injection).hash_code(), std::make_shared<Injection>(std::forward<Ts>(params)...));
         }
 
         template <typename Injection>
         std::shared_ptr<Injection> inject(std::shared_ptr<Injection> injection) {
-            _injections.emplace(typeid(Injection).hash_code(), injection);
+            injections_.emplace(typeid(Injection).hash_code(), injection);
             return injection;
         }
 
         template <typename Injection>
         std::shared_ptr<Injection> injection() {
-            auto injection_iterator { _injections.find(typeid(Injection).hash_code()) };
-            assert(injection_iterator != _injections.end());
+            auto injection_iterator { injections_.find(typeid(Injection).hash_code()) };
+            assert(injection_iterator != injections_.end());
             return std::static_pointer_cast<Injection>(injection_iterator->second);
         }
 
@@ -159,7 +165,7 @@ namespace konan::ecs {
         WorldId id_ { current_world_id_++ };
         EntityId current_entity_id_ {};
 
-        std::unordered_map<std::size_t, std::shared_ptr<void>> _injections;
+        std::unordered_map<std::size_t, std::shared_ptr<void>> injections_;
 
         inline static WorldId current_world_id_ {};
         inline static std::unordered_set<IComponentHandler*> components_;

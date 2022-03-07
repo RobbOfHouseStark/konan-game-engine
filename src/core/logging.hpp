@@ -4,15 +4,9 @@
 #include <iostream>
 
 namespace konan::core {
-    template <typename T, typename... Ts>
-    void print(std::ostream& os, T&& param, Ts&& ... params) {
-        os << param << " ";
-
-        if constexpr (sizeof...(Ts) != 0) {
-            print(os, std::forward<Ts>(params)...);
-        } else {
-            os << '\n';
-        }
+    template <typename... Ts>
+    void print(std::ostream& os, Ts&& ... params) {
+        (os << ... << params) << '\n';
     }
 
     template <typename... Ts>

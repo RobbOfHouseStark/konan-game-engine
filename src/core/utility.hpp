@@ -15,11 +15,11 @@ namespace konan::core {
     template <typename It, typename T>
     auto join(It const& iterable, T const& separator) {
         auto begin { std::begin(iterable) };
+        auto initial_value { *begin };
         auto end { std::end(iterable) };
-        auto start { *begin };
-        return std::accumulate(++begin, end, start,
-                    [&separator](auto a, typename It::value_type b) {
-                        return std::move(a) + separator + b;
+        return std::accumulate(++begin, end, initial_value,
+                    [&separator](auto a, auto b) {
+                        return std::move(a) + separator + std::move(b);
                     });
     }
 }

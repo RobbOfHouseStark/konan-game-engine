@@ -1,8 +1,8 @@
 #ifndef KGE_EDITOR_CUBE_HPP
 #define KGE_EDITOR_CUBE_HPP
 
-#include "script.hpp"
-#include "transform.hpp"
+#include "engine/components/script.hpp"
+#include "engine/components/transform.hpp"
 
 namespace konan::editor {
     struct Cube : public engine::IScriptable {
@@ -13,7 +13,7 @@ namespace konan::editor {
 
     private:
         float rotation_speed_;
-        engine::Transform* transform_;
+        engine::Transform* transform_ {};
     };
 }
 

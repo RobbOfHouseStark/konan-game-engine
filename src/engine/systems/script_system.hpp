@@ -1,7 +1,8 @@
 #ifndef KGE_ENGINE_SCRIPT_SYSTEM_HPP
 #define KGE_ENGINE_SCRIPT_SYSTEM_HPP
 
-#include "ecs.hpp"
+#include "ecs/ecs.hpp"
+
 #include "script.hpp"
 
 namespace konan::engine {
@@ -9,7 +10,7 @@ namespace konan::engine {
                           public ecs::IRunSystem,
                           public ecs::IDestroySystem {
         void init() override;
-        void run() override;
+        void run(double dt) override;
         void destroy() override;
     };
 }

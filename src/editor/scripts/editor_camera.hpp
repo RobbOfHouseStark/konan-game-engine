@@ -1,13 +1,13 @@
 #ifndef KGE_EDITOR_CAMERA_HPP
 #define KGE_EDITOR_CAMERA_HPP
 
-#include "button.hpp"
-#include "camera.hpp"
-#include "ecs.hpp"
-#include "key.hpp"
-#include "mouse_move.hpp"
-#include "script.hpp"
-#include "transform.hpp"
+#include "ecs/ecs.hpp"
+#include "engine/components/camera.hpp"
+#include "engine/components/script.hpp"
+#include "engine/components/transform.hpp"
+#include "engine/events/button.hpp"
+#include "engine/events/key.hpp"
+#include "engine/events/mouse_move.hpp"
 
 namespace konan::editor {
     struct EditorCamera : public engine::IScriptable {
@@ -17,13 +17,13 @@ namespace konan::editor {
         void run() override;
 
     private:
-        float _speed;
-        float _rotation_speed;
+        float speed_;
+        float rotation_speed_;
 
-        bool _should_rotate {};
-        bool _forward {}, _back {}, _left {}, _right {};
+        bool should_rotate_ {};
+        bool forward_ {}, back_ {}, left_ {}, right_ {};
 
-        engine::Transform* _transform;
+        engine::Transform* transform_;
     };
 }
 

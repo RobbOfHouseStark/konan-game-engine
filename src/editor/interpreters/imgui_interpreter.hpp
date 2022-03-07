@@ -5,10 +5,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "id.hpp"
-#include "model.hpp"
-#include "transform.hpp"
-#include "world.hpp"
+#include "ecs/world.hpp"
+#include "engine/components/id.hpp"
+#include "engine/components/model.hpp"
+#include "engine/components/transform.hpp"
 
 namespace konan::editor {
     struct ImGuiInterpreter {

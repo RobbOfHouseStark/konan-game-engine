@@ -10,8 +10,6 @@ namespace konan::ecs {
         struct promise_type;
         using handle_type = std::coroutine_handle<promise_type>;
         struct promise_type {
-            T* value_;
-
             ComponentGenerator<T> get_return_object() {
                 return ComponentGenerator<T>(handle_type::from_promise(*this));
             }
@@ -25,6 +23,13 @@ namespace konan::ecs {
             std::suspend_always final_suspend() noexcept { return {}; }
             void unhandled_exception() {}
             void return_void() {}
+
+            T* value() {
+                return value_;
+            }
+
+        private:
+            T* value_;
         };
 
         ComponentGenerator(handle_type handle)
@@ -48,7 +53,7 @@ namespace konan::ecs {
         T& yielded_value() {
             fill();
             full_ = false;
-            return *handle_.promise().value_;
+            return *handle_.promise().value();
         }
 
     private:

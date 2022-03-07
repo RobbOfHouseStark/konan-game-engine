@@ -1,5 +1,6 @@
 add_library(
         engine
+        interpreters/creator_interpreter.hpp
         systems/render_system.cpp systems/render_system.hpp
         systems/event_system.cpp systems/event_system.hpp
         systems/script_system.cpp systems/script_system.hpp
@@ -12,13 +13,15 @@ add_library(
         components/model.hpp components/model.cpp
         components/id.cpp components/id.hpp
         components/script.cpp components/script.hpp
-        components/render_data.cpp components/render_data.hpp)
+        components/render_data.cpp components/render_data.hpp
+)
 
 target_include_directories(
         engine INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+        engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/interpreters
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/components
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/systems
         engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/events
-        engine PUBLIC ../editor/interpreters
 )
+
 target_link_libraries(engine ecs graphics)

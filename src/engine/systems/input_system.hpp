@@ -3,21 +3,22 @@
 
 #include <optional>
 
+#include "ecs/ecs.hpp"
+#include "graphics/window.hpp"
+
 #include "button.hpp"
-#include "ecs.hpp"
 #include "key.hpp"
 #include "mouse_move.hpp"
-#include "window.hpp"
 
 namespace konan::engine {
     struct InputSystem : public ecs::IInitSystem,
                          public ecs::IRunSystem {
         void init() override;
-        void run() override;
+        void run(double dt) override;
 
     private:
-        std::shared_ptr<graphics::Window> _window;
-        double _previous_x {}, _previous_y {};
+        std::shared_ptr<graphics::Window> window_;
+        double previous_x_ {}, previous_y_ {};
     };
 }
 

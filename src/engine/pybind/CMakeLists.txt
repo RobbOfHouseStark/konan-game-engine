@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.21)
+project(pybind)
+set(CMAKE_CXX_STANDARD 20)
+add_subdirectory(../../../deps/pybind11 pybind11)
+pybind11_add_module(konan python.cpp)

@@ -3,8 +3,9 @@
 
 #include <cstdint>
 
+#include "core/files.hpp"
+
 #include "bindable.hpp"
-#include "files.hpp"
 
 namespace konan::graphics {
     struct Texture : public IBindable {

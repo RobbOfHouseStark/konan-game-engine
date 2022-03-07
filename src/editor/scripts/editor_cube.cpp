@@ -10,6 +10,5 @@ namespace konan::editor {
 
     void Cube::run() {
         transform_->rotation.x += rotation_speed_;
-//        entity->get<engine::Transform>().rotation.x += rotation_speed_;
     }
 }

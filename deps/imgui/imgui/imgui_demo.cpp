@@ -569,10 +569,10 @@ void ImGui::ShowDemoWindow(bool* p_open)
             ImGui::LogButtons();
 
             HelpMarker("You can also call ImGui::LogText() to output directly to the log without a visual output.");
-            if (ImGui::Button("Copy \"Hello, world!\" to clipboard"))
+            if (ImGui::Button("Copy \"Hello, set_world!\" to clipboard"))
             {
                 ImGui::LogToClipboard();
-                ImGui::LogText("Hello, world!");
+                ImGui::LogText("Hello, set_world!");
                 ImGui::LogFinish();
             }
             ImGui::TreePop();
@@ -4437,7 +4437,7 @@ static void ShowDemoWindowTables()
                     if (column == 0)
                         ImGui::Text("Line %d", row);
                     else
-                        ImGui::Text("Hello world %d,%d", column, row);
+                        ImGui::Text("Hello set_world %d,%d", column, row);
                 }
             }
             ImGui::EndTable();
@@ -4465,7 +4465,7 @@ static void ShowDemoWindowTables()
             for (int cell = 0; cell < 20 * 7; cell++)
             {
                 ImGui::TableNextColumn();
-                ImGui::Text("Hello world %d,%d", ImGui::TableGetColumnIndex(), ImGui::TableGetRowIndex());
+                ImGui::Text("Hello set_world %d,%d", ImGui::TableGetColumnIndex(), ImGui::TableGetRowIndex());
             }
             ImGui::EndTable();
         }

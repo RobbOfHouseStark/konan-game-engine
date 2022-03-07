@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ecs.hpp"
+#include "ecs/ecs.hpp"
 
 namespace konan::engine {
     struct IScriptable {

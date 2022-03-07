@@ -1,8 +1,17 @@
-#include "editor.hpp"
+#include "core/clock.hpp"
+#include "editor/editor.hpp"
 
 int main() {
     using namespace konan;
 
-    editor::Editor editor {};
-    editor.run();
+    bool running { true };
+    editor::Editor editor { &running };
+    core::Clock clock {};
+
+    editor.init();
+    while (running) {
+        clock.tick(60);
+        editor.run(clock.dt());
+    }
+    editor.destroy();
 }

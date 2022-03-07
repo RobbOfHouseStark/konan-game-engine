@@ -9,5 +9,4 @@ add_library(
         scene.cpp scene.hpp
 )
 
-target_include_directories(ecs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(ecs core)
+target_link_libraries(ecs PRIVATE core)
