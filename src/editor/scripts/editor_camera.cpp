@@ -8,7 +8,7 @@ namespace konan::editor {
         transform_ = &entity->get<engine::Transform>();
     }
 
-    void EditorCamera::run() {
+    void EditorCamera::run(double dt) {
         for (auto& [_, button]: world->filter<engine::Button>()) {
             // TODO: move to config.
             if (button.id == 1)

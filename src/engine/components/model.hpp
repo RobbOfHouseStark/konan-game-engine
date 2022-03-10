@@ -3,13 +3,12 @@
 
 #include <memory>
 
-#include "shader.hpp"
-#include "texture.hpp"
-#include "vertex_array.hpp"
+#include "graphics/shader.hpp"
+#include "graphics/texture.hpp"
+#include "graphics/vertex_array.hpp"
 
 namespace konan::engine {
     struct Model {
-        Model();
         Model(std::shared_ptr<graphics::Shader> shader,
               std::shared_ptr<graphics::Texture> texture,
               std::shared_ptr<graphics::VertexArray> vertex_array);

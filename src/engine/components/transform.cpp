@@ -76,4 +76,10 @@ namespace konan::engine {
     glm::mat4 Transform::scale_matrix() const {
         return glm::scale(scale);
     }
+
+    void show_transform(Transform& transform) {
+        ImGui::DragFloat3("Position.", &(transform.position[0]));
+        ImGui::DragFloat3("Rotation.", &(transform.rotation[0]), 2.f);
+        ImGui::DragFloat3("Scale.", &(transform.scale[0]), .1f, 100.f, .001f, "%.3f", 0);
+    }
 }

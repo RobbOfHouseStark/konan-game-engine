@@ -3,9 +3,17 @@
 
 #include <string>
 
+#include "interpreters/create_interpreter.hpp"
+#include "interpreters/imgui_interpreter.hpp"
+
 namespace konan::engine {
-    struct Id {
-        Id();
+    struct Id;
+
+    Id create_id();
+    void show_id(Id& id);
+
+    struct Id : public CreateInterpreter<Id, create_id>,
+                public ImGuiInterpreter<Id, show_id> {
         Id(std::string tag, std::string name);
 
     public:

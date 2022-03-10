@@ -3,8 +3,9 @@
 
 namespace konan::ecs {
     World::~World() {
-//        for (auto component_handler: components_)
-//            component_handler->clear(id_);
+        // TODO: remake static components.
+       // for (auto component_handler: components_)
+       //     component_handler->clear(id_);
     }
 
     Entity World::new_entity() {
@@ -18,7 +19,7 @@ namespace konan::ecs {
 
     void World::update() {
         for (auto component: components_) {
-            if (component->is_one_frame(id_))
+            if (component->is_one_frame())
                 component->clear(id_);
         }
     }

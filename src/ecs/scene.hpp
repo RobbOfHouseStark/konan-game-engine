@@ -1,20 +1,24 @@
 #ifndef KGE_ECS_SCENE_HPP
 #define KGE_ECS_SCENE_HPP
 
+#include <utility>
+
+#include "entity.hpp"
 #include "systems.hpp"
 #include "world.hpp"
 
 namespace konan::ecs {
     struct Scene {
-        explicit Scene(bool* running);
+        explicit Scene();
 
-        void init();
-        void run(double dt);
-        void destroy();
+        virtual void init();
+        virtual void run(double dt);
+        virtual void destroy();
+
+        std::shared_ptr<World> get_world();
+        std::shared_ptr<Systems> get_systems();
 
     protected:
-        bool* running {};
-
         std::shared_ptr<World> world;
         std::shared_ptr<Systems> systems;
     };

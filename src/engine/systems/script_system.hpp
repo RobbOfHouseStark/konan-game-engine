@@ -3,7 +3,7 @@
 
 #include "ecs/ecs.hpp"
 
-#include "script.hpp"
+#include "components/script.hpp"
 
 namespace konan::engine {
     struct ScriptSystem : public ecs::IInitSystem,

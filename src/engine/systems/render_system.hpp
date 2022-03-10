@@ -8,12 +8,12 @@
 #include "graphics/renderer.hpp"
 #include "graphics/window.hpp"
 
-#include "camera.hpp"
-#include "id.hpp"
-#include "model.hpp"
-#include "render_data.hpp"
-#include "script.hpp"
-#include "transform.hpp"
+#include "components/camera.hpp"
+#include "components/id.hpp"
+#include "components/model.hpp"
+#include "components/render_data.hpp"
+#include "components/script.hpp"
+#include "components/transform.hpp"
 
 namespace konan::engine {
     struct RenderSystem : public ecs::IInitSystem,
@@ -26,8 +26,6 @@ namespace konan::engine {
     private:
         std::shared_ptr<graphics::Window> window_;
         std::shared_ptr<graphics::Renderer> renderer_;
-
-        std::optional<ecs::Entity> selected_entity_;
     };
 }
 

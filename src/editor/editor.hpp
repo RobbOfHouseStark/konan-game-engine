@@ -13,7 +13,7 @@
 #include "engine/systems/event_system.hpp"
 #include "engine/systems/input_system.hpp"
 #include "engine/systems/render_system.hpp"
-#include "engine/systems/script_system.hpp"
+#include "engine/systems/ui_system.hpp"
 #include "graphics/window.hpp"
 #include "graphics/opengl/gl_framebuffer.hpp"
 #include "graphics/opengl/gl_renderer.hpp"
@@ -22,13 +22,23 @@
 #include "graphics/opengl/gl_vertex_array.hpp"
 #include "graphics/opengl/gl_window.hpp"
 
-#include "editor_camera.hpp"
-#include "editor_cube.hpp"
-#include "editor_ui.hpp"
+#include "scripts/editor_camera.hpp"
+#include "scripts/editor_cube.hpp"
+#include "scripts/editor_ui.hpp"
+#include "systems/editor_render_system.hpp"
+#include "systems/start_scene_system.hpp"
 
 namespace konan::editor {
    struct Editor : public ecs::Scene {
         Editor(bool* running);
+
+        void run(double dt) override;
+
+   private:
+       bool* running_;
+
+       bool scene_running_ {};
+       ecs::Scene scene_ {};
    };
 }
 

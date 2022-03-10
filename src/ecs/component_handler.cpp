@@ -6,11 +6,11 @@ namespace konan::ecs {
         World::register_component(this);
     }
 
-    void IComponentHandler::set_one_frame(WorldId world_id) {
-        one_frame.insert(world_id);
+    void IComponentHandler::set_one_frame() {
+        one_frame = true;
     }
 
-    bool IComponentHandler::is_one_frame(WorldId world_id) {
-        return one_frame.contains(world_id);
+    bool IComponentHandler::is_one_frame() {
+        return one_frame;
     }
 }

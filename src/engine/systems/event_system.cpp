@@ -1,5 +1,4 @@
 #include "event_system.hpp"
-#include "core/logging.hpp"
 
 namespace konan::engine {
     EventSystem::EventSystem(bool* running)
@@ -18,5 +17,7 @@ namespace konan::engine {
             if (key.id == 'Q')
                 *running_ = false;
         }
+
+        window_->swap_buffers();
     }
 }

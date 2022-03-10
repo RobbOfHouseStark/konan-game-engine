@@ -3,11 +3,10 @@
 
 #include <memory>
 
-#include "framebuffer.hpp"
+#include "graphics/framebuffer.hpp"
 
 namespace konan::engine {
     struct RenderData {
-        RenderData() = default;
         explicit RenderData(std::shared_ptr<graphics::Framebuffer> framebuffer);
 
     public:

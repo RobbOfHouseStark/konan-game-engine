@@ -1,11 +1,6 @@
 #include "model.hpp"
 
 namespace konan::engine {
-    Model::Model()
-        : Model(std::shared_ptr<graphics::Shader>(nullptr),
-                std::shared_ptr<graphics::Texture>(nullptr),
-                std::shared_ptr<graphics::VertexArray>(nullptr)) {}
-
     Model::Model(std::shared_ptr<graphics::Shader> shader,
                  std::shared_ptr<graphics::Texture> texture,
                  std::shared_ptr<graphics::VertexArray> vertex_array)

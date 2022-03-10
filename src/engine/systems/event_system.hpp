@@ -4,7 +4,7 @@
 #include "ecs/ecs.hpp"
 #include "graphics/window.hpp"
 
-#include "key.hpp"
+#include "events/key.hpp"
 
 namespace konan::engine {
 struct EventSystem : public ecs::IInitSystem, public ecs::IRunSystem {

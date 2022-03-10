@@ -3,19 +3,22 @@
 
 #include <memory>
 #include <type_traits>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 #include "types.hpp"
 #include "world.hpp"
 
 namespace konan::ecs {
+    struct Systems;
+
     struct ISystem {
-        void set_world(std::shared_ptr<World> owner);
+        void owners(std::shared_ptr<World> owner_world, Systems* owner_systems);
         virtual ~ISystem() = default;
 
     protected:
         std::shared_ptr<World> world;
+        Systems* systems;
     };
 
     struct IInitSystem : virtual ISystem {
@@ -34,7 +37,7 @@ namespace konan::ecs {
                      public IRunSystem,
                      public IDestroySystem {
         explicit Systems(std::shared_ptr<World> world) {
-            set_world(world);
+            owners(world, nullptr);
         }
 
         template <typename System, typename... Ts>
@@ -48,7 +51,7 @@ namespace konan::ecs {
         void add(std::shared_ptr<System> system) {
             static_assert(std::is_convertible_v<System, ISystem>, "System must be derived from ISystem.");
 
-            system->set_world(world);
+            system->owners(world, this);
 
             if constexpr (std::is_base_of_v<IInitSystem, System>) {
                 init_systems_.push_back(system);
@@ -59,6 +62,13 @@ namespace konan::ecs {
             if constexpr (std::is_base_of_v<IDestroySystem, System>) {
                 destroy_systems_.push_back(system);
             }
+        }
+
+        template <typename System>
+        void remove() {
+            std::erase_if(init_systems_, [](auto elem) { return std::dynamic_pointer_cast<System>(elem); });
+            std::erase_if(run_systems_, [](auto elem) { return std::dynamic_pointer_cast<System>(elem); });
+            std::erase_if(destroy_systems_, [](auto elem) { return std::dynamic_pointer_cast<System>(elem); });
         }
 
         void init() override {

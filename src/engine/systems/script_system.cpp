@@ -8,7 +8,7 @@ namespace konan::engine {
 
     void ScriptSystem::run(double dt) {
         for (auto& [_, script]: world->filter<Script>())
-            script.run();
+            script.run(dt, "GENERAL");
     }
 
     void ScriptSystem::destroy() {

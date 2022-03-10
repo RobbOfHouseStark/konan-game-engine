@@ -7,8 +7,14 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include "interpreters/imgui_interpreter.hpp"
+
 namespace konan::engine {
-    struct Transform {
+    struct Transform;
+
+    void show_transform(Transform& transform);
+
+    struct Transform : public ImGuiInterpreter<Transform, show_transform> {
         Transform();
         Transform(float x, float y, float z);
         Transform(glm::vec3 const& position, glm::vec3 const& rotation, glm::vec3 const& scale);

@@ -7,7 +7,7 @@
 
 namespace konan::core {
     struct Clock {
-        void tick(int fps = 0);
+        void tick();
         double dt() const;
         double fps() const;
 

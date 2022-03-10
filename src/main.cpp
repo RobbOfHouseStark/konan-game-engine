@@ -10,7 +10,7 @@ int main() {
 
     editor.init();
     while (running) {
-        clock.tick(60);
+        clock.tick();
         editor.run(clock.dt());
     }
     editor.destroy();

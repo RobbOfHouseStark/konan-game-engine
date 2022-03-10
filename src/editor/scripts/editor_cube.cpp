@@ -8,7 +8,7 @@ namespace konan::editor {
         transform_ = &entity->get<engine::Transform>();
     }
 
-    void Cube::run() {
+    void Cube::run(double dt) {
         transform_->rotation.x += rotation_speed_;
     }
 }

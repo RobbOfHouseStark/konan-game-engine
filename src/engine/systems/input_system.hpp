@@ -6,9 +6,9 @@
 #include "ecs/ecs.hpp"
 #include "graphics/window.hpp"
 
-#include "button.hpp"
-#include "key.hpp"
-#include "mouse_move.hpp"
+#include "events/button.hpp"
+#include "events/key.hpp"
+#include "events/mouse_move.hpp"
 
 namespace konan::engine {
     struct InputSystem : public ecs::IInitSystem,

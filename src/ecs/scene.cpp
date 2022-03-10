@@ -1,8 +1,8 @@
 #include "scene.hpp"
 
 namespace konan::ecs {
-    Scene::Scene(bool* running)
-        : running { running }, world { std::make_shared<World>() }, systems { std::make_shared<Systems>(world) } {}
+    Scene::Scene()
+        : world { std::make_shared<World>() }, systems { std::make_shared<Systems>(world) } {}
 
     void Scene::init() {
         systems->init();
@@ -15,5 +15,13 @@ namespace konan::ecs {
 
     void Scene::destroy() {
         systems->destroy();
+    }
+
+    std::shared_ptr<World> Scene::get_world() {
+        return world;
+    }
+
+    std::shared_ptr<Systems> Scene::get_systems() {
+        return systems;
     }
 }

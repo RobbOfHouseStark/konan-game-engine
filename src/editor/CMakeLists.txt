@@ -1,16 +1,15 @@
 add_library(
         editor
         editor.cpp editor.hpp
-        interpreters/imgui_interpreter.hpp
         scripts/editor_cube.cpp scripts/editor_cube.hpp
         scripts/editor_camera.cpp scripts/editor_camera.hpp
-        scripts/editor_ui.cpp scripts/editor_ui.hpp)
+        scripts/editor_ui.cpp scripts/editor_ui.hpp
+        events/start.hpp events/end.hpp
+        systems/start_scene_system.cpp systems/start_scene_system.hpp systems/editor_render_system.cpp systems/editor_render_system.hpp)
 
 target_include_directories(
-        editor INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+        editor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
         editor PUBLIC ../../deps/json/include
-        editor PUBLIC interpreters
-        editor PUBLIC scripts
 )
 target_link_libraries(editor PRIVATE core ecs engine graphics)
 

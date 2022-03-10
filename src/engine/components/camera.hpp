@@ -8,18 +8,17 @@
 
 #include "graphics/framebuffer.hpp"
 
-#include "creator_interpreter.hpp"
+#include "interpreters/create_interpreter.hpp"
+#include "interpreters/imgui_interpreter.hpp"
 
 namespace konan::engine {
     struct Camera;
-}
 
-namespace {
-    konan::engine::Camera create_camera();
-}
+    Camera create_camera();
+    void show_camera(Camera& camera);
 
-namespace konan::engine {
-    struct Camera : public CreatorInterpreter<Camera, create_camera> {
+    struct Camera : public CreateInterpreter<Camera, create_camera>,
+                    public ImGuiInterpreter<Camera, show_camera> {
         Camera(float fov, float ratio, float near_clipping_plane, float far_clipping_plane);
 
         glm::mat4 projection_matrix() const;
@@ -28,12 +27,6 @@ namespace konan::engine {
         float fov, ratio;
         float near_clipping_plane, far_clipping_plane;
     };
-}
-
-namespace {
-    konan::engine::Camera create_camera() {
-        return konan::engine::Camera { 45.f, 1.f, 0.1f, 500.f };
-    }
 }
 
 #endif  // KGE_ENGINE_CAMERA_HPP

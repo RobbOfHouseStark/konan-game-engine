@@ -14,6 +14,7 @@ namespace konan::ecs {
         IComponentHandler();
 
         virtual void add(WorldId world_id, EntityId entity_id, void* factory = nullptr) = 0;
+        virtual void get(WorldId world_id, EntityId entity_id, void* getter) = 0;
         virtual bool has(WorldId world_id, EntityId entity_id) = 0;
         virtual void clear(WorldId world_id) = 0;
         virtual void del(WorldId world_id, EntityId entity_id) = 0;
@@ -23,15 +24,19 @@ namespace konan::ecs {
         virtual std::size_t size(WorldId world_id) = 0;
         virtual std::string name() = 0;
 
-        void set_one_frame(WorldId world_id);
-        bool is_one_frame(WorldId world_id);
+        void set_one_frame();
+        bool is_one_frame();
 
     protected:
-        std::unordered_set<WorldId> one_frame;
+        bool one_frame;
     };
 
     template <typename Component>
     struct ComponentHandler : public IComponentHandler {
+        void get(WorldId world_id, EntityId entity_id, void* getter) override {
+            static_cast<void(*)(Component&)>(getter)(get(world_id, entity_id));
+        }
+
         void add(WorldId world_id, EntityId entity_id, void* factory = nullptr) override {
             if (factory == nullptr) {
                 assert(std::is_default_constructible_v<Component>);

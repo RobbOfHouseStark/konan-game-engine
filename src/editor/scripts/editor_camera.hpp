@@ -14,7 +14,7 @@ namespace konan::editor {
         EditorCamera(float speed, float rotation_speed);
 
         void init() override;
-        void run() override;
+        void run(double dt) override;
 
     private:
         float speed_;

@@ -14,17 +14,21 @@
 #include "engine/components/render_data.hpp"
 #include "engine/components/script.hpp"
 #include "engine/components/transform.hpp"
+#include "engine/interpreters/create_interpreter.hpp"
+#include "engine/interpreters/imgui_interpreter.hpp"
 
-#include "creator_interpreter.hpp"
-#include "imgui_interpreter.hpp"
+#include "events/end.hpp"
+#include "events/start.hpp"
 
 namespace konan::editor {
     struct EditorUI : public engine::IScriptable {
-        void run() override;
+        void init() override;
+        void run(double dt) override;
 
     private:
         std::optional<ecs::Entity> selected_entity_;
         ImVec2 viewport_size_;
+        std::shared_ptr<ecs::World> scene_world_;
     };
 }
 

@@ -14,7 +14,7 @@ namespace konan::engine {
         virtual ~IScriptable() = default;
 
         virtual void init();
-        virtual void run();
+        virtual void run(double dt);
         virtual void destroy();
 
         void owners(ecs::Entity* owner_entity, std::shared_ptr<ecs::World> owner_world);
@@ -25,7 +25,6 @@ namespace konan::engine {
     };
 
     struct Script {
-        Script() = default;
         explicit Script(ecs::Entity entity);
 
         template <typename T, typename... Ts>
@@ -33,11 +32,15 @@ namespace konan::engine {
             return add(std::make_shared<T>(std::forward<Ts>(params)...));
         }
 
-        Script& add(std::shared_ptr<IScriptable> script, std::string const& group = "");
+        Script& add(std::shared_ptr<IScriptable> script, std::string const& group = "GENERAL");
 
-        void init(std::string const& group = "");
-        void run(std::string const& group = "");
-        void destroy(std::string const& group = "");
+        void init(std::string const& group);
+        void run(double dt, std::string const& group);
+        void destroy(std::string const& group);
+
+        void init();
+        void run(double dt);
+        void destroy();
 
     public:
         std::unordered_map<std::string, std::vector<std::shared_ptr<IScriptable>>> scripts;

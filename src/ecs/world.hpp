@@ -48,12 +48,6 @@ namespace konan::ecs {
 
         void del(EntityId entity_id);
 
-        template <typename Interpreter>
-        void all() {
-            for (auto component: components_)
-                component->all(Interpreter::interpret);
-        }
-
         template <typename Component, typename... Components>
         decltype(auto) filter() {
             if constexpr (sizeof...(Components) == 0) {
@@ -96,7 +90,7 @@ namespace konan::ecs {
 
         template <typename Component>
         void one_frame() {
-            ComponentHolder<Component>::impl.set_one_frame(id_);
+            ComponentHolder<Component>::impl.set_one_frame();
         }
 
         void update();

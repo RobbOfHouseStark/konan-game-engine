@@ -1,20 +1,19 @@
-#include "render_system.hpp"
+#include "editor_render_system.hpp"
 
-namespace konan::engine {
-    RenderSystem::RenderSystem(std::shared_ptr<graphics::Renderer> renderer)
+namespace konan::editor {
+    EditorRenderSystem::EditorRenderSystem(std::shared_ptr<graphics::Renderer> renderer)
         : renderer_ { renderer } {}
 
-    void RenderSystem::init() {
-        window_ = world->injection<graphics::Window>();
-        window_->imgui_init();
+    void EditorRenderSystem::init() {
+        scene_world_ = world->injection<ecs::World>();
     }
 
-    void RenderSystem::run(double dt) {
-        for (auto& [_, camera, render_data, camera_transform]: world->filter<Camera, RenderData, Transform>()) {
+    void EditorRenderSystem::run(double dt) {
+        for (auto& [_, camera, render_data, camera_transform]:
+                    world->filter<engine::Camera, engine::RenderData, engine::Transform>()) {
             render_data.framebuffer->bind();
-            window_->clear();
 
-            for (auto& [entity, model, transform]: world->filter<Model, Transform>()) {
+            for (auto& [entity, model, transform]: scene_world_->filter<engine::Model, engine::Transform>()) {
                 model.bind();
                 model.shader->load_uniform("v_MVP",
                                            camera.projection_matrix() *
